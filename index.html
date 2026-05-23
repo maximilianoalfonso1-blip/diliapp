@@ -609,16 +609,7 @@
       <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="text" placeholder="Ej: 376-4123456"></div>
       <div class="form-group">
         <label>Zonas que podés cubrir</label>
-        <div class="checkbox-list">
-          <label class="checkbox-item"><input type="checkbox" checked> Posadas</label>
-          <label class="checkbox-item"><input type="checkbox"> Apóstoles</label>
-          <label class="checkbox-item"><input type="checkbox"> Oberá</label>
-          <label class="checkbox-item"><input type="checkbox"> Eldorado</label>
-          <label class="checkbox-item"><input type="checkbox"> Puerto Iguazú</label>
-          <label class="checkbox-item"><input type="checkbox"> San Vicente</label>
-          <label class="checkbox-item"><input type="checkbox"> Leandro N. Alem</label>
-          <label class="checkbox-item"><input type="checkbox"> Candelaria</label>
-        </div>
+        <div class="checkbox-list" id="zonasList"></div>
       </div>
       <div class="terms">Al anotarme, autorizo la publicación de mis datos en la app para que colegas me contacten para diligenciamientos. Soy responsable de la veracidad de los datos cargados.</div>
       <button class="btn-primary" onclick="validarFormulario()">Confirmar y publicar</button>
@@ -646,11 +637,8 @@
       <div style="font-size:32px; margin-bottom:10px;">⚠️</div>
       <div id="modalTitulo" style="font-size:16px; font-weight:700; color:#1a4d6f; margin-bottom:4px;">Reportar error</div>
       <div style="font-size:12px; color:#777; margin-bottom:18px;">Contactá al desarrollador para corregir el dato</div>
-      <a id="modalWaLink" href="https://wa.me/543764256652" target="_blank" style="display:block; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:10px;">
+      <a id="modalWaLink" href="https://wa.me/543764256652" target="_blank" style="display:block; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
         💬 Reportar por WhatsApp
-      </a>
-      <a href="tel:+543764256652" style="display:block; background:#1a4d6f; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
-        📞 Llamar: 376-4256652
       </a>
       <button onclick="cerrarContacto()" style="background:none; border:none; color:#888; font-size:13px; cursor:pointer; text-decoration:underline;">Cerrar</button>
     </div>
@@ -661,14 +649,37 @@
 
 <script>
 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvagfTIrGtffuPVyU-xroKj1bR-8FWkk0GXQhaaF4kCxrhN3Q0qujbwW8iom3vngOlOQ/exec';
+let DILIGENCIADORES_CACHE = null;
+
+async function cargarDiligenciadores() {
+  if (DILIGENCIADORES_CACHE !== null) return DILIGENCIADORES_CACHE;
+  try {
+    const res = await fetch(SCRIPT_URL);
+    DILIGENCIADORES_CACHE = await res.json();
+  } catch(e) { DILIGENCIADORES_CACHE = []; }
+  return DILIGENCIADORES_CACHE;
+}
+
+function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+
 function validarFormulario() {
-  const nombre   = document.getElementById('fNombre').value.trim();
+  const nombre    = document.getElementById('fNombre').value.trim();
   const matricula = document.getElementById('fMatricula').value.trim();
-  const tel      = document.getElementById('fTel').value.trim();
+  const tel       = document.getElementById('fTel').value.trim();
   if (!nombre || !matricula || !tel) {
     alert('Completá los campos obligatorios: Nombre, Matrícula y Teléfono (*)');
     return;
   }
+  const zonas = Array.from(document.querySelectorAll('#zonasList input:checked'))
+    .map(cb => cb.nextSibling.textContent.trim()).join(', ');
+  const params = new URLSearchParams({
+    nombre, matricula, tel, zonas,
+    dni:      document.getElementById('fDni').value.trim(),
+    localidad: document.getElementById('fLocalidad').value.trim()
+  });
+  fetch(SCRIPT_URL, { method: 'POST', body: params, mode: 'no-cors' });
+  DILIGENCIADORES_CACHE = null; // forzar recarga la próxima vez
   show('screen6');
 }
 
@@ -810,6 +821,16 @@ function show(id, circ) {
     pantActual = id;
   }
 
+  if (id === 'screen5') {
+    const lista = document.getElementById('zonasList');
+    if (!lista.children.length) {
+      const nombres = [...new Set(DATA.map(r => r.nombre))].sort((a,b) => a.localeCompare(b,'es'));
+      lista.innerHTML = nombres.map(n =>
+        `<label class="checkbox-item"><input type="checkbox"> ${n}</label>`
+      ).join('');
+    }
+  }
+
   if (id === 'screen2') {
     document.getElementById('searchInput').value = '';
     document.getElementById('searchResults').style.display = 'none';
@@ -822,7 +843,7 @@ function show(id, circ) {
   }
 }
 
-function showResultadoData(nombre, circ) {
+async function showResultadoData(nombre, circ) {
   const d = DATA.find(r => r.nombre === nombre && (!circ || r.circ === circ))
          || DATA.find(r => r.nombre === nombre);
   if (!d) return;
@@ -830,8 +851,8 @@ function showResultadoData(nombre, circ) {
   const info = CIRC_INFO[d.circ];
   document.getElementById('resultTitulo').textContent = d.nombre;
 
-  const telHtml  = d.tel  !== '—' ? `<a href="tel:${d.tel}">📞 ${d.tel}</a>`         : `<span class="value">— no publicado</span>`;
-  const mailHtml = d.mail !== '—' ? `<a href="mailto:${d.mail}">✉️ ${d.mail}</a>`    : `<span class="value">— no publicado</span>`;
+  const telHtml  = d.tel  !== '—' ? `<a href="tel:${d.tel}">📞 ${d.tel}</a>`      : `<span class="value">— no publicado</span>`;
+  const mailHtml = d.mail !== '—' ? `<a href="mailto:${d.mail}">✉️ ${d.mail}</a>` : `<span class="value">— no publicado</span>`;
 
   document.getElementById('resultBody').innerHTML = `
     <div class="title">${d.nombre}</div>
@@ -845,18 +866,46 @@ function showResultadoData(nombre, circ) {
       <div class="info-row"><span class="label">Horario</span><span class="value">${d.horario}</span></div>
       <div class="alert-yellow">⚠️ La app no saca turnos. Contactá por teléfono o mail directamente.</div>
     </div>
-    <div class="block">
+    <div class="block" id="blockDil">
       <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
-      <div class="alert-empty">
-        <strong>Todavía no hay diligencieros anotados</strong>
-        ¿Sos colega de la zona? Anotate y aparecé acá.
-        <button class="btn-primary" onclick="show('screen5')">+ Anotate como diligenciador</button>
-      </div>
+      <div style="text-align:center;padding:14px;color:#999;font-size:13px;">Cargando...</div>
     </div>
     <button class="btn-contacto" style="margin-top:4px;" onclick="mostrarContactoError('${d.nombre}')">⚠️ Reportar error en esta ficha</button>`;
 
   pantActual = 'screen3';
   show('screen4');
+
+  const todos = await cargarDiligenciadores();
+  const matches = todos.filter(dil =>
+    dil.zonas.some(z => norm(z) === norm(d.nombre))
+  );
+  const blockDil = document.getElementById('blockDil');
+  if (!blockDil) return;
+  if (!matches.length) {
+    blockDil.innerHTML = `
+      <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
+      <div class="alert-empty">
+        <strong>Todavía no hay diligencieros anotados</strong>
+        ¿Sos colega de la zona? Anotate y aparecé acá.
+        <button class="btn-primary" onclick="show('screen5')">+ Anotate como diligenciador</button>
+      </div>`;
+  } else {
+    const cards = matches.map(dil => {
+      const telNum = dil.tel.replace(/\D/g,'');
+      return `<div class="colega-card">
+        <div class="colega-name">${dil.nombre}</div>
+        <div class="colega-data">Mat. ${dil.matricula}</div>
+        <div class="colega-actions">
+          <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank">💬 WhatsApp</a>
+          <a class="btn-small btn-call" href="tel:${dil.tel}">📞 Llamar</a>
+        </div>
+      </div>`;
+    }).join('');
+    blockDil.innerHTML = `
+      <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
+      ${cards}
+      <button class="btn-secondary" onclick="show('screen5')" style="margin-top:8px;">+ Anotarme también</button>`;
+  }
 }
 
 /* ── Render municipios por circunscripción ── */
