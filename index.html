@@ -2,8 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.4, user-scalable=yes">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://script.google.com https://script.googleusercontent.com https://docs.google.com; img-src 'self' data: blob:;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://script.google.com https://script.googleusercontent.com https://docs.google.com; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests;">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>DiliApp — Mockup</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
@@ -581,7 +583,7 @@
   <div class="screen" id="screen4">
     <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
     <div class="app-header">
-      <span class="back" onclick="show('screen3')">‹</span>
+      <span class="back" onclick="show(pantAnteriorAResultado)">‹</span>
       <h2 id="resultTitulo">Posadas</h2>
     </div>
     <div style="padding: 18px; overflow-y:auto; flex:1;" id="resultBody">
@@ -602,17 +604,30 @@
       <div class="title">Tus datos</div>
       <div class="subtitle">Completá para que los colegas puedan contactarte cuando necesiten diligenciar en tu zona.</div>
       <div class="info-banner">ℹ️ Los datos se publican para uso exclusivo entre colegas abogados.</div>
-      <div class="form-group"><label>Nombre y apellido *</label><input id="fNombre" type="text" placeholder="Ej: Juan Pérez" maxlength="100" autocomplete="name"></div>
-      <div class="form-group"><label>Matrícula *</label><input id="fMatricula" type="text" placeholder="Ej: 1234" maxlength="20"></div>
+      <div class="form-group"><label>Nombre y apellido *</label><input id="fNombre" type="text" placeholder="Ej: Juan Pérez" maxlength="100" autocomplete="name" required></div>
+      <div class="form-group"><label>Matrícula *</label><input id="fMatricula" type="text" placeholder="Ej: 1234" maxlength="20" required></div>
       <div class="form-group"><label>Localidad de residencia</label><input id="fLocalidad" type="text" placeholder="Ej: Posadas" maxlength="80" autocomplete="address-level2"></div>
-      <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="tel" placeholder="Ej: 3764123456" maxlength="30" autocomplete="tel"></div>
+      <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="tel" placeholder="Ej: 3764123456" maxlength="30" autocomplete="tel" inputmode="tel" required></div>
       <div class="form-group">
         <label>Zonas que podés cubrir</label>
         <input type="text" id="zonaSearch" placeholder="🔍 Buscar zona..." oninput="filtrarZonas(this.value)"
           style="width:100%; padding:8px 10px; border:1.5px solid #ddd; border-radius:8px; font-size:13px; margin-bottom:6px; outline:none; font-family:inherit;">
         <div class="checkbox-list" id="zonasList"></div>
       </div>
-      <div class="terms">Al anotarme, autorizo la publicación de mis datos en la app para que colegas me contacten para diligenciamientos. Soy responsable de la veracidad de los datos cargados.<br><br>Para solicitar la baja o corrección de tus datos, reportalo desde cualquier ficha y el administrador lo gestiona.</div>
+      <div style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
+        <label>Dejar vacío<input id="fWebsite" type="text" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <div class="terms">
+        <strong>Protección de datos personales (Ley 25.326)</strong><br>
+        Al confirmar, prestás consentimiento libre, expreso e informado para que tus datos (nombre, matrícula, localidad, teléfono y zonas) se publiquen en DiliApp, con la finalidad exclusiva de que otros colegas abogados puedan contactarte para encargarte diligenciamientos.<br><br>
+        Los datos se almacenan en Google Sheets bajo administración del responsable de la app. No se ceden a terceros ni se utilizan para otros fines. Sos responsable de la veracidad de los datos cargados.<br><br>
+        <strong>Derechos ARCO:</strong> podés solicitar en cualquier momento el <strong>acceso, rectificación, cancelación u oposición</strong> al tratamiento de tus datos. Para hacerlo, tocá <strong>“Reportar error”</strong> en cualquier ficha o escribí por WhatsApp al desarrollador. La baja se gestiona dentro de las 48 hs hábiles.<br><br>
+        Responsable del tratamiento: Dr. Maximiliano D. Alfonso, abogado (Misiones).
+      </div>
+      <label style="display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-size:12px; color:#555; cursor:pointer;">
+        <input id="fConsentimiento" type="checkbox" style="margin-top:3px;">
+        <span>Leí y acepto el tratamiento de mis datos conforme a la Ley 25.326.</span>
+      </label>
       <button class="btn-primary" onclick="validarFormulario()">Confirmar y publicar</button>
     </div>
   </div>
@@ -653,17 +668,8 @@
 
 <script>
 
-// Al soltar los dedos vuelve al tamaño normal
-document.addEventListener('touchend', function() {
-  setTimeout(function() {
-    if (window.visualViewport && window.visualViewport.scale <= 1.02) return;
-    const vp = document.querySelector('meta[name=viewport]');
-    vp.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no');
-    setTimeout(function() {
-      vp.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.4, user-scalable=yes');
-    }, 400);
-  }, 150);
-});
+// Zoom estándar: respetamos la decisión del usuario (WCAG 2.1 — 1.4.4 Resize text).
+// El doble-tap accidental se mitiga con `touch-action: manipulation` aplicado en CSS.
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvagfTIrGtffuPVyU-xroKj1bR-8FWkk0GXQhaaF4kCxrhN3Q0qujbwW8iom3vngOlOQ/exec';
 let DILIGENCIADORES_CACHE = null;
@@ -690,21 +696,46 @@ function parsearCSV(text) {
   });
 }
 
+function esRespuestaValida(text) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.trim();
+  if (!t) return false;
+  // Apps Script devuelve HTML cuando hay error de auth/login
+  if (t.startsWith('<')) return false;
+  return true;
+}
+
+async function intentarFuente(url, parser) {
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 10000);
+    const res = await fetch(url, { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const text = await res.text();
+    if (!esRespuestaValida(text)) return null;
+    const parsed = parser(text);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch(e) { return null; }
+}
+
 async function cargarDiligenciadores() {
   if (DILIGENCIADORES_CACHE !== null) return DILIGENCIADORES_CACHE;
-  try {
-    const res = await fetch(SCRIPT_URL);
-    const text = await res.text();
-    try {
-      DILIGENCIADORES_CACHE = JSON.parse(text);
-    } catch(e) {
-      DILIGENCIADORES_CACHE = parsearCSV(text);
-    }
-  } catch(e) { DILIGENCIADORES_CACHE = []; }
+  // 1) Apps Script: probar JSON primero, luego CSV
+  let datos = await intentarFuente(SCRIPT_URL, text => {
+    try { return JSON.parse(text); } catch(e) { return parsearCSV(text); }
+  });
+  // 2) Fallback al CSV directo si Apps Script falla
+  if (!datos) datos = await intentarFuente(CSV_URL, parsearCSV);
+  if (datos) {
+    DILIGENCIADORES_CACHE = { ok: true, lista: datos };
+  } else {
+    DILIGENCIADORES_CACHE = { ok: false, lista: [] };
+  }
   return DILIGENCIADORES_CACHE;
 }
 
-function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 
 function esc(s) {
   return String(s)
@@ -713,41 +744,110 @@ function esc(s) {
 }
 
 let _enviando = false;
-function validarFormulario() {
+let _formAbiertoEn = 0;
+const RATE_LIMIT_KEY = 'diliapp_envios';
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_VENTANA_MS = 60 * 60 * 1000; // 1 hora
+const TIEMPO_MIN_FORMULARIO_MS = 5000;
+
+function obtenerEnviosRecientes() {
+  try {
+    const raw = localStorage.getItem(RATE_LIMIT_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    const ahora = Date.now();
+    return Array.isArray(arr) ? arr.filter(t => ahora - t < RATE_LIMIT_VENTANA_MS) : [];
+  } catch(e) { return []; }
+}
+
+function registrarEnvio() {
+  try {
+    const envios = obtenerEnviosRecientes();
+    envios.push(Date.now());
+    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(envios));
+  } catch(e) {}
+}
+
+async function validarFormulario() {
   if (_enviando) return;
+
+  // Honeypot: si el bot lo llenó, fingir éxito sin enviar
+  const hp = document.getElementById('fWebsite');
+  if (hp && hp.value) { show('screen6'); return; }
+
+  // Tiempo mínimo desde que se abrió el form
+  if (_formAbiertoEn && (Date.now() - _formAbiertoEn) < TIEMPO_MIN_FORMULARIO_MS) {
+    alert('Esperá unos segundos antes de enviar el formulario.');
+    return;
+  }
+
+  // Rate limit por navegador
+  const envios = obtenerEnviosRecientes();
+  if (envios.length >= RATE_LIMIT_MAX) {
+    alert('Ya enviaste varios registros desde este dispositivo. Probá de nuevo más tarde.');
+    return;
+  }
+
   const nombre    = document.getElementById('fNombre').value.trim();
   const matricula = document.getElementById('fMatricula').value.trim();
   const tel       = document.getElementById('fTel').value.trim();
+  const consent   = document.getElementById('fConsentimiento');
   if (!nombre || !matricula || !tel) {
     alert('Completá los campos obligatorios: Nombre, Matrícula y Teléfono (*)');
     return;
   }
-  if (!/\d{6,}/.test(tel.replace(/\D/g,''))) {
-    alert('El teléfono debe tener al menos 6 dígitos.');
+  if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s.'-]{2,100}$/.test(nombre)) {
+    alert('El nombre solo puede contener letras, espacios, apóstrofo y guion.');
     return;
   }
+  if (!/^[A-Za-z0-9.\-\/\s]{1,20}$/.test(matricula)) {
+    alert('La matrícula no es válida.');
+    return;
+  }
+  if (!/^[0-9+()\s-]{6,30}$/.test(tel) || !/\d{6,}/.test(tel.replace(/\D/g,''))) {
+    alert('El teléfono debe tener al menos 6 dígitos y solo caracteres válidos (0-9, +, -, espacios, paréntesis).');
+    return;
+  }
+  if (!consent || !consent.checked) {
+    alert('Tenés que aceptar el tratamiento de datos personales (Ley 25.326) para continuar.');
+    return;
+  }
+
   _enviando = true;
   const btn = document.querySelector('#screen5 .btn-primary');
   if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+
   const zonas = Array.from(document.querySelectorAll('#zonasList input:checked'))
     .map(cb => cb.nextSibling.textContent.trim()).join(', ');
   const params = new URLSearchParams({
     nombre, matricula, tel, zonas,
     localidad: document.getElementById('fLocalidad').value.trim()
   });
-  fetch(SCRIPT_URL, { method: 'POST', body: params, mode: 'no-cors' })
-    .finally(() => { _enviando = false; if (btn) { btn.disabled = false; btn.textContent = 'Confirmar y publicar'; } });
-  DILIGENCIADORES_CACHE = null;
-  // Limpiar formulario
-  ['fNombre','fMatricula','fLocalidad','fTel'].forEach(id => document.getElementById(id).value = '');
-  document.querySelectorAll('#zonasList input:checked').forEach(cb => cb.checked = false);
-  show('screen6');
+
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 15000);
+    await fetch(SCRIPT_URL, { method: 'POST', body: params, mode: 'no-cors', signal: ctrl.signal });
+    clearTimeout(timer);
+    registrarEnvio();
+    DILIGENCIADORES_CACHE = null;
+    ['fNombre','fMatricula','fLocalidad','fTel'].forEach(id => document.getElementById(id).value = '');
+    if (hp) hp.value = '';
+    if (consent) consent.checked = false;
+    document.querySelectorAll('#zonasList input:checked').forEach(cb => cb.checked = false);
+    show('screen6');
+  } catch(e) {
+    alert('No pudimos enviar tus datos. Revisá tu conexión y probá de nuevo.');
+  } finally {
+    _enviando = false;
+    if (btn) { btn.disabled = false; btn.textContent = 'Confirmar y publicar'; }
+  }
 }
 
 function filtrarZonas(q) {
-  q = q.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  q = q.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   document.querySelectorAll('#zonasList .checkbox-item').forEach(item => {
-    const txt = item.textContent.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+    const txt = item.textContent.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
     item.style.display = txt.includes(q) ? '' : 'none';
   });
 }
@@ -756,6 +856,7 @@ function mostrarContactoError(municipio) {
   const titulo = document.getElementById('modalTitulo');
   const waLink = document.getElementById('modalWaLink');
   if (municipio) {
+    // textContent ya escapa cualquier HTML; el href se construye con encodeURIComponent
     titulo.textContent = 'Reportar error en ' + municipio;
     const msg = encodeURIComponent('Hola, encontré un error en DiliApp.\n\nMunicipio: ' + municipio + '\nError: ');
     waLink.href = 'https://wa.me/543764256652?text=' + msg;
@@ -813,7 +914,6 @@ const DATA = [
   { nombre:'Aristóbulo del Valle',    circ:'2da', tipo:'Juzgado de Paz',          dir:'San Martín N° 919',                                    tel:'(3755) 234696',  mail:'juzgadopaz.aristobulodelvalle@jusmisiones.gov.ar',      horario:'L-V 7:00 a 13:00' },
   { nombre:'Campo Grande',            circ:'2da', tipo:'Juzgado de Paz',          dir:'Beltrán entre Ayacucho y Alberdi. Centro Cívico',      tel:'(3755) 655856',  mail:'juzgadopaz.campogrande@jusmisiones.gov.ar',             horario:'L-V 7:00 a 13:00' },
   { nombre:'Dos de Mayo',             circ:'2da', tipo:'Juzgado de Paz',          dir:'San Lorenzo esq. Iguazú',                              tel:'(3755) 496050',  mail:'juzgadopaz.dosdemayo@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
-  { nombre:'Ruiz de Montoya',         circ:'2da', tipo:'Juzgado de Paz',          dir:'Av. Los Inmigrantes s/n',                              tel:'(3743) 507461',  mail:'juzgadopaz.ruizdemontoya@jusmisiones.gov.ar',           horario:'L-V 7:00 a 13:00' },
   { nombre:'Almafuerte',              circ:'2da', tipo:'Juzgado de Paz',          dir:'Mz 15 Solar B',                                        tel:'(3754) 416275',  mail:'juzgadopaz.almafuerte@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
   { nombre:'Arroyo del Medio',        circ:'2da', tipo:'Juzgado de Paz',          dir:'Ruta Prov. N° 30 – Lote N° 188',                       tel:'(3754) 508641',  mail:'juzgadopaz.arroyodelmedio@jusmisiones.gov.ar',          horario:'L-V 7:00 a 13:00' },
   { nombre:'Caá Yarí',                circ:'2da', tipo:'Juzgado de Paz',          dir:'Ruta Prov. 225 Lote 44 Mz 5 Solar D',                  tel:'(3754) 433222',  mail:'juzgadopaz.caayari@jusmisiones.gov.ar',                 horario:'L-V 7:00 a 13:00' },
@@ -870,6 +970,7 @@ const DATA = [
 
 let circActual = '1ra';
 let municipioActual = null;
+let pantAnteriorAResultado = 'screen3';
 const SCREEN_ORDER = ['screen0','screen1','screen2','screen3','screen4','screen5','screen6'];
 let pantActual = 'screen0';
 
@@ -895,11 +996,12 @@ function show(id, circ) {
     if (!lista.children.length) {
       const nombres = [...new Set(DATA.map(r => r.nombre))].sort((a,b) => a.localeCompare(b,'es'));
       lista.innerHTML = nombres.map(n =>
-        `<label class="checkbox-item"><input type="checkbox"> ${n}</label>`
+        `<label class="checkbox-item"><input type="checkbox"> ${esc(n)}</label>`
       ).join('');
     }
     const zonaSearch = document.getElementById('zonaSearch');
     if (zonaSearch) { zonaSearch.value = ''; filtrarZonas(''); }
+    _formAbiertoEn = Date.now();
   }
 
   if (id === 'screen2') {
@@ -922,8 +1024,11 @@ async function showResultadoData(nombre, circ) {
   const info = CIRC_INFO[d.circ];
   document.getElementById('resultTitulo').textContent = d.nombre;
 
-  const telHtml  = d.tel  !== '—' ? `<a href="tel:${d.tel}">📞 ${d.tel}</a>`      : `<span class="value">— no publicado</span>`;
-  const mailHtml = d.mail !== '—' ? `<a href="mailto:${d.mail}">✉️ ${d.mail}</a>` : `<span class="value">— no publicado</span>`;
+  // Sanear tel y mail antes de meterlos en href para prevenir javascript:/data: URIs
+  const telSafe  = d.tel.replace(/[^0-9+()\s-]/g,'');
+  const mailSafe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.mail) ? d.mail : '';
+  const telHtml  = d.tel  !== '—' && telSafe  ? `<a href="tel:${esc(telSafe)}">📞 ${esc(d.tel)}</a>`      : `<span class="value">— no publicado</span>`;
+  const mailHtml = d.mail !== '—' && mailSafe ? `<a href="mailto:${esc(mailSafe)}">✉️ ${esc(d.mail)}</a>` : `<span class="value">— no publicado</span>`;
   const sinDatos = d.dir === '—' && d.tel === '—' && d.mail === '—';
 
   const bloqueInfo = sinDatos
@@ -937,33 +1042,46 @@ async function showResultadoData(nombre, circ) {
       </div>`
     : `<div class="block">
         <div class="block-title"><span>🏛️</span> ¿Dónde se diligencia?</div>
-        <div class="info-row"><span class="label">Tipo</span><span class="value">${d.tipo}</span></div>
-        <div class="info-row"><span class="label">Dirección</span><span class="value">${d.dir}</span></div>
+        <div class="info-row"><span class="label">Tipo</span><span class="value">${esc(d.tipo)}</span></div>
+        <div class="info-row"><span class="label">Dirección</span><span class="value">${esc(d.dir)}</span></div>
         <div class="info-row"><span class="label">Teléfono</span>${telHtml}</div>
         <div class="info-row"><span class="label">Mail</span>${mailHtml}</div>
-        <div class="info-row"><span class="label">Horario</span><span class="value">${d.horario}</span></div>
+        <div class="info-row"><span class="label">Horario</span><span class="value">${esc(d.horario)}</span></div>
         <div class="alert-yellow">⚠️ Esta app no gestiona turnos — contactá directo por tel. o mail.</div>
       </div>`;
 
   document.getElementById('resultBody').innerHTML = `
-    <div class="title">${d.nombre}</div>
-    <div class="subtitle">${info.titulo}</div>
+    <div class="title">${esc(d.nombre)}</div>
+    <div class="subtitle">${esc(info.titulo)}</div>
     ${bloqueInfo}
     <div class="block" id="blockDil">
       <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
       <div style="text-align:center;padding:14px;color:#999;font-size:13px;">Cargando...</div>
     </div>
-    <button class="btn-contacto" style="margin-top:4px;" onclick="mostrarContactoError('${d.nombre}')">⚠️ Reportar error en esta ficha</button>`;
+    <button class="btn-contacto" style="margin-top:4px;" onclick="mostrarContactoError('${esc(d.nombre)}')">⚠️ Reportar error en esta ficha</button>`;
 
-  pantActual = 'screen3';
+  // Guardar de qué pantalla viene para que el botón "‹" vuelva al lugar correcto
+  pantAnteriorAResultado = (pantActual === 'screen2' || pantActual === 'screen3') ? pantActual : 'screen3';
   show('screen4');
 
-  const todos = await cargarDiligenciadores();
-  const matches = todos.filter(dil =>
-    dil.zonas.some(z => norm(z) === norm(d.nombre))
-  );
+  const resp = await cargarDiligenciadores();
   const blockDil = document.getElementById('blockDil');
   if (!blockDil) return;
+
+  if (!resp.ok) {
+    blockDil.innerHTML = `
+      <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
+      <div class="alert-empty" style="background:#fff4e6; border-color:#f4b870; color:#7a4a00;">
+        <strong>No pudimos cargar la lista</strong>
+        Revisá tu conexión y volvé a intentar.
+        <button class="btn-primary" onclick="DILIGENCIADORES_CACHE=null; showResultadoData('${esc(d.nombre)}','${esc(d.circ)}')" style="margin-top:10px;">Reintentar</button>
+      </div>`;
+    return;
+  }
+
+  const matches = resp.lista.filter(dil =>
+    dil.zonas.some(z => norm(z) === norm(d.nombre))
+  );
   if (!matches.length) {
     blockDil.innerHTML = `
       <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
@@ -991,6 +1109,11 @@ async function showResultadoData(nombre, circ) {
   }
 }
 
+// Escape para atributos onclick (combina escape HTML + escape de comillas JS)
+function escAttr(s) {
+  return esc(String(s)).replace(/\\/g,'\\\\');
+}
+
 /* ── Render municipios por circunscripción ── */
 function renderMunicipios(circ) {
   const info = CIRC_INFO[circ];
@@ -999,10 +1122,10 @@ function renderMunicipios(circ) {
   const municipios = DATA.filter(r => r.circ === circ);
   const list = document.getElementById('munList');
   list.innerHTML = municipios.map(r =>
-    `<li class="item" onclick="showResultadoData('${r.nombre.replace(/'/g,"\\'")}','${r.circ}')">
+    `<li class="item" onclick="showResultadoData('${escAttr(r.nombre)}','${escAttr(r.circ)}')">
       <div>
-        <div class="item-name">${r.nombre}</div>
-        <div class="item-sub">${info.titulo} · ${r.tipo}</div>
+        <div class="item-name">${esc(r.nombre)}</div>
+        <div class="item-sub">${esc(info.titulo)} · ${esc(r.tipo)}</div>
       </div>
       <div class="item-arrow">›</div>
     </li>`
@@ -1013,7 +1136,7 @@ function renderMunicipios(circ) {
 function buscarMunicipio(q) {
   const searchRes = document.getElementById('searchResults');
   const circBlock = document.getElementById('circBlock');
-  q = q.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  q = q.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   if (!q) {
     searchRes.style.display = 'none';
     circBlock.style.display = 'block';
@@ -1021,17 +1144,17 @@ function buscarMunicipio(q) {
   }
   circBlock.style.display = 'none';
   const matches = DATA.filter(r =>
-    r.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').includes(q)
+    r.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q)
   );
   if (!matches.length) {
     searchRes.innerHTML = '<li style="padding:14px;color:#888;font-size:13px;">No encontramos esa localidad. Revisá la ortografía o elegí por circunscripción.</li>';
   } else {
     searchRes.innerHTML = matches.map(r => {
       const info = CIRC_INFO[r.circ];
-      return `<li class="item" onclick="showResultadoData('${r.nombre.replace(/'/g,"\\'")}','${r.circ}')">
+      return `<li class="item" onclick="showResultadoData('${escAttr(r.nombre)}','${escAttr(r.circ)}')">
         <div>
-          <div class="item-name">${r.nombre}</div>
-          <div class="item-sub">${info.titulo}</div>
+          <div class="item-name">${esc(r.nombre)}</div>
+          <div class="item-sub">${esc(info.titulo)}</div>
         </div>
         <div class="item-arrow">›</div>
       </li>`;
