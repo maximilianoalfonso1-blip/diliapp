@@ -315,10 +315,10 @@
   .info-banner { background: #e3f2fd; border-left: 4px solid #1a4d6f; padding: 10px 12px; border-radius: 6px; font-size: 12px; color: #1a4d6f; margin-bottom: 14px; line-height: 1.4; }
 
   /* ── ÉXITO ── */
-  .success-screen { text-align: center; padding: 40px 20px; }
-  .success-icon { font-size: 60px; margin-bottom: 16px; }
-  .success-title { font-size: 22px; font-weight: 700; color: #1a4d6f; margin-bottom: 12px; }
-  .success-text { color: #555; font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+  .success-screen { text-align: center; padding: 28px 24px 20px; }
+  .success-icon { font-size: 44px; margin-bottom: 10px; }
+  .success-title { font-size: 20px; font-weight: 700; color: #1a4d6f; margin-bottom: 8px; }
+  .success-text { color: #555; font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
 
   /* ── NAV BOTONES ── */
   .nav-buttons {
@@ -607,9 +607,11 @@
       <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="text" placeholder="Ej: 376-4123456"></div>
       <div class="form-group">
         <label>Zonas que podés cubrir</label>
+        <input type="text" id="zonaSearch" placeholder="🔍 Buscar zona..." oninput="filtrarZonas(this.value)"
+          style="width:100%; padding:8px 10px; border:1.5px solid #ddd; border-radius:8px; font-size:13px; margin-bottom:6px; outline:none; font-family:inherit;">
         <div class="checkbox-list" id="zonasList"></div>
       </div>
-      <div class="terms">Al anotarme, autorizo la publicación de mis datos en la app para que colegas me contacten para diligenciamientos. Soy responsable de la veracidad de los datos cargados.</div>
+      <div class="terms">Al anotarme, autorizo la publicación de mis datos en la app para que colegas me contacten para diligenciamientos. Soy responsable de la veracidad de los datos cargados.<br><br>Para solicitar la baja o corrección de tus datos, reportalo desde cualquier ficha y el administrador lo gestiona.</div>
       <button class="btn-primary" onclick="validarFormulario()">Confirmar y publicar</button>
     </div>
   </div>
@@ -623,9 +625,12 @@
     <div class="success-screen" style="flex:1;">
       <div class="success-icon">✅</div>
       <div class="success-title">¡Ya estás anotado!</div>
-      <div class="success-text">Tu perfil ya aparece en las zonas que elegiste.<br>Los colegas podrán contactarte directo por teléfono o WhatsApp.</div>
+      <div class="success-text">Tu perfil ya aparece en las zonas que elegiste.<br>Los colegas podrán contactarte directo por WhatsApp.</div>
       <button class="btn-primary" onclick="show('screen0')">Volver al inicio</button>
       <button class="btn-secondary" onclick="show('screen4')">Ver cómo aparezco</button>
+      <div style="margin-top:20px; background:#f7f9fb; border:1px solid #e1e7ed; border-radius:10px; padding:13px 14px; font-size:12px; color:#666; line-height:1.5; text-align:left;">
+        ℹ️ ¿Querés sacar tu nombre de la lista o corregir algún dato? Entrá a cualquier municipio, tocá <strong>Reportar error</strong> y el administrador lo gestiona.
+      </div>
     </div>
   </div>
 
@@ -699,12 +704,19 @@ function validarFormulario() {
     .map(cb => cb.nextSibling.textContent.trim()).join(', ');
   const params = new URLSearchParams({
     nombre, matricula, tel, zonas,
-    dni:      document.getElementById('fDni').value.trim(),
     localidad: document.getElementById('fLocalidad').value.trim()
   });
   fetch(SCRIPT_URL, { method: 'POST', body: params, mode: 'no-cors' });
   DILIGENCIADORES_CACHE = null; // forzar recarga la próxima vez
   show('screen6');
+}
+
+function filtrarZonas(q) {
+  q = q.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  document.querySelectorAll('#zonasList .checkbox-item').forEach(item => {
+    const txt = item.textContent.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+    item.style.display = txt.includes(q) ? '' : 'none';
+  });
 }
 
 function mostrarContactoError(municipio) {
@@ -853,6 +865,8 @@ function show(id, circ) {
         `<label class="checkbox-item"><input type="checkbox"> ${n}</label>`
       ).join('');
     }
+    const zonaSearch = document.getElementById('zonaSearch');
+    if (zonaSearch) { zonaSearch.value = ''; filtrarZonas(''); }
   }
 
   if (id === 'screen2') {
