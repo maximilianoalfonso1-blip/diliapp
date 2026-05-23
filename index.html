@@ -605,7 +605,7 @@
       <div class="subtitle">Completá para que los colegas puedan contactarte cuando necesiten diligenciar en tu zona.</div>
       <div class="info-banner">ℹ️ Los datos se publican para uso exclusivo entre colegas abogados.</div>
       <div class="form-group"><label>Nombre y apellido *</label><input id="fNombre" type="text" placeholder="Ej: Juan Pérez" maxlength="100" autocomplete="name" required></div>
-      <div class="form-group"><label>Matrícula *</label><input id="fMatricula" type="text" placeholder="Ej: 1234" maxlength="20" required></div>
+      <div class="form-group"><label>Matrícula *</label><input id="fMatricula" type="text" placeholder="Ej: 1234" maxlength="10" inputmode="numeric" pattern="[0-9]*" required></div>
       <div class="form-group"><label>Localidad de residencia</label><input id="fLocalidad" type="text" placeholder="Ej: Posadas" maxlength="80" autocomplete="address-level2"></div>
       <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="tel" placeholder="Ej: 3764123456" maxlength="30" autocomplete="tel" inputmode="tel" required></div>
       <div class="form-group">
@@ -800,8 +800,8 @@ async function validarFormulario() {
     alert('El nombre solo puede contener letras, espacios, apóstrofo y guion.');
     return;
   }
-  if (!/^[A-Za-z0-9.\-\/\s]{1,20}$/.test(matricula)) {
-    alert('La matrícula no es válida.');
+  if (!/^\d{1,10}$/.test(matricula)) {
+    alert('La matrícula debe ser numérica (solo dígitos).');
     return;
   }
   if (!/^[0-9+()\s-]{6,30}$/.test(tel) || !/\d{6,}/.test(tel.replace(/\D/g,''))) {
