@@ -6,6 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://script.google.com https://script.googleusercontent.com https://docs.google.com; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests;">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), midi=(), interest-cohort=()">
 <title>DiliApp — Mockup</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
@@ -743,6 +744,13 @@ function esc(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+// CSV/Formula injection: si un valor empieza con =, +, -, @, \t o \r,
+// Excel/Sheets lo interpreta como fórmula. Anteponer apóstrofe lo neutraliza.
+function sanearFormula(s) {
+  const t = String(s).trim();
+  return /^[=+\-@\t\r]/.test(t) ? "'" + t : t;
+}
+
 let _enviando = false;
 let _formAbiertoEn = 0;
 const RATE_LIMIT_KEY = 'diliapp_envios';
@@ -812,6 +820,11 @@ async function validarFormulario() {
     alert('Tenés que aceptar el tratamiento de datos personales (Ley 25.326) para continuar.');
     return;
   }
+  const zonasMarcadas = document.querySelectorAll('#zonasList input:checked').length;
+  if (zonasMarcadas > 30) {
+    alert('Podés cubrir hasta 30 zonas como máximo. Si necesitás más, contactá al desarrollador.');
+    return;
+  }
 
   _enviando = true;
   const btn = document.querySelector('#screen5 .btn-primary');
@@ -820,8 +833,11 @@ async function validarFormulario() {
   const zonas = Array.from(document.querySelectorAll('#zonasList input:checked'))
     .map(cb => cb.nextSibling.textContent.trim()).join(', ');
   const params = new URLSearchParams({
-    nombre, matricula, tel, zonas,
-    localidad: document.getElementById('fLocalidad').value.trim()
+    nombre:    sanearFormula(nombre),
+    matricula: sanearFormula(matricula),
+    tel:       sanearFormula(tel),
+    zonas:     sanearFormula(zonas),
+    localidad: sanearFormula(document.getElementById('fLocalidad').value.trim())
   });
 
   try {
@@ -1079,7 +1095,18 @@ async function showResultadoData(nombre, circ) {
     return;
   }
 
-  const matches = resp.lista.filter(dil =>
+  // Normalizar entradas: defender contra payloads donde zonas no sea array
+  // (puede venir como string desde un Apps Script con JSON inesperado)
+  const lista = resp.lista.map(dil => ({
+    nombre:    String(dil.nombre || ''),
+    matricula: String(dil.matricula || ''),
+    tel:       String(dil.tel || ''),
+    zonas:     Array.isArray(dil.zonas) ? dil.zonas
+             : typeof dil.zonas === 'string' ? dil.zonas.split(',').map(z => z.trim()).filter(Boolean)
+             : []
+  })).filter(dil => dil.nombre && dil.tel);
+
+  const matches = lista.filter(dil =>
     dil.zonas.some(z => norm(z) === norm(d.nombre))
   );
   if (!matches.length) {
@@ -1092,14 +1119,18 @@ async function showResultadoData(nombre, circ) {
       </div>`;
   } else {
     const cards = matches.map(dil => {
-      const telNum = String(dil.tel).replace(/\D/g,'');
+      const telNum = dil.tel.replace(/\D/g,'');
+      const telValido = telNum.length >= 6 && telNum.length <= 15;
+      const acciones = telValido
+        ? `<div class="colega-actions">
+            <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+            <a class="btn-small btn-call" href="tel:+54${telNum}">📞 Llamar</a>
+          </div>`
+        : `<div style="font-size:11px; color:#999; text-align:center; margin-top:6px;">Tel. no publicado</div>`;
       return `<div class="colega-card">
         <div class="colega-name">${esc(dil.nombre)}</div>
         <div class="colega-data">Mat. ${esc(dil.matricula)}</div>
-        <div class="colega-actions">
-          <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-          <a class="btn-small btn-call" href="tel:+54${telNum}">📞 Llamar</a>
-        </div>
+        ${acciones}
       </div>`;
     }).join('');
     blockDil.innerHTML = `
