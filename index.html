@@ -655,11 +655,14 @@
 
 // Al soltar los dedos vuelve al tamaño normal
 document.addEventListener('touchend', function() {
-  const vp = document.querySelector('meta[name=viewport]');
-  vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-  setTimeout(() => {
-    vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.4, user-scalable=yes');
-  }, 350);
+  setTimeout(function() {
+    if (window.visualViewport && window.visualViewport.scale <= 1.02) return;
+    const vp = document.querySelector('meta[name=viewport]');
+    vp.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    setTimeout(function() {
+      vp.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.4, user-scalable=yes');
+    }, 400);
+  }, 150);
 });
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvagfTIrGtffuPVyU-xroKj1bR-8FWkk0GXQhaaF4kCxrhN3Q0qujbwW8iom3vngOlOQ/exec';
