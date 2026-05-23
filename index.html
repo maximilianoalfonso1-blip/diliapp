@@ -650,11 +650,37 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvagfTIrGtffuPVyU-xroKj1bR-8FWkk0GXQhaaF4kCxrhN3Q0qujbwW8iom3vngOlOQ/exec';
 let DILIGENCIADORES_CACHE = null;
 
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/1_rp7MvHx7-iftbfsAVWTHSSGSjFip-fa018SvQfGLMA/gviz/tq?tqx=out:csv&sheet=Diligenciadores';
+
+function parsearCSV(text) {
+  return text.trim().split('\n').slice(1).filter(l => l.trim()).map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (const ch of line) {
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { cols.push(cur); cur = ''; }
+      else { cur += ch; }
+    }
+    cols.push(cur);
+    return {
+      nombre:    cols[0] || '',
+      matricula: cols[1] || '',
+      tel:       cols[4] || '',
+      zonas:     (cols[5] || '').split(',').map(z => z.trim()).filter(Boolean)
+    };
+  });
+}
+
 async function cargarDiligenciadores() {
   if (DILIGENCIADORES_CACHE !== null) return DILIGENCIADORES_CACHE;
   try {
     const res = await fetch(SCRIPT_URL);
-    DILIGENCIADORES_CACHE = await res.json();
+    const text = await res.text();
+    try {
+      DILIGENCIADORES_CACHE = JSON.parse(text);
+    } catch(e) {
+      DILIGENCIADORES_CACHE = parsearCSV(text);
+    }
   } catch(e) { DILIGENCIADORES_CACHE = []; }
   return DILIGENCIADORES_CACHE;
 }
