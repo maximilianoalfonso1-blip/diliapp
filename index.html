@@ -692,6 +692,12 @@ async function cargarDiligenciadores() {
 
 function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
 
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 function validarFormulario() {
   const nombre    = document.getElementById('fNombre').value.trim();
   const matricula = document.getElementById('fMatricula').value.trim();
@@ -943,11 +949,11 @@ async function showResultadoData(nombre, circ) {
     const cards = matches.map(dil => {
       const telNum = String(dil.tel).replace(/\D/g,'');
       return `<div class="colega-card">
-        <div class="colega-name">${dil.nombre}</div>
-        <div class="colega-data">Mat. ${dil.matricula}</div>
+        <div class="colega-name">${esc(dil.nombre)}</div>
+        <div class="colega-data">Mat. ${esc(dil.matricula)}</div>
         <div class="colega-actions">
           <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank">💬 WhatsApp</a>
-          <a class="btn-small btn-call" href="tel:${dil.tel}">📞 Llamar</a>
+          <a class="btn-small btn-call" href="tel:+54${telNum}">📞 Llamar</a>
         </div>
       </div>`;
     }).join('');
