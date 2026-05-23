@@ -877,19 +877,31 @@ async function showResultadoData(nombre, circ) {
 
   const telHtml  = d.tel  !== '—' ? `<a href="tel:${d.tel}">📞 ${d.tel}</a>`      : `<span class="value">— no publicado</span>`;
   const mailHtml = d.mail !== '—' ? `<a href="mailto:${d.mail}">✉️ ${d.mail}</a>` : `<span class="value">— no publicado</span>`;
+  const sinDatos = d.dir === '—' && d.tel === '—' && d.mail === '—';
+
+  const bloqueInfo = sinDatos
+    ? `<div class="block">
+        <div class="block-title"><span>🏛️</span> ¿Dónde se diligencia?</div>
+        <div style="text-align:center; padding:20px 10px;">
+          <div style="font-size:32px; margin-bottom:10px;">🕐</div>
+          <div style="font-weight:700; color:#1a4d6f; margin-bottom:6px;">Información pendiente de actualizar</div>
+          <div style="font-size:13px; color:#777; line-height:1.5;">Todavía no tenemos los datos de contacto de este juzgado. Si los conocés, usá el botón de abajo para reportarlos.</div>
+        </div>
+      </div>`
+    : `<div class="block">
+        <div class="block-title"><span>🏛️</span> ¿Dónde se diligencia?</div>
+        <div class="info-row"><span class="label">Tipo</span><span class="value">${d.tipo}</span></div>
+        <div class="info-row"><span class="label">Dirección</span><span class="value">${d.dir}</span></div>
+        <div class="info-row"><span class="label">Teléfono</span>${telHtml}</div>
+        <div class="info-row"><span class="label">Mail</span>${mailHtml}</div>
+        <div class="info-row"><span class="label">Horario</span><span class="value">${d.horario}</span></div>
+        <div class="alert-yellow">⚠️ La app no saca turnos. Contactá por teléfono o mail directamente.</div>
+      </div>`;
 
   document.getElementById('resultBody').innerHTML = `
     <div class="title">${d.nombre}</div>
     <div class="subtitle">${info.titulo}</div>
-    <div class="block">
-      <div class="block-title"><span>🏛️</span> ¿Dónde se diligencia?</div>
-      <div class="info-row"><span class="label">Tipo</span><span class="value">${d.tipo}</span></div>
-      <div class="info-row"><span class="label">Dirección</span><span class="value">${d.dir}</span></div>
-      <div class="info-row"><span class="label">Teléfono</span>${telHtml}</div>
-      <div class="info-row"><span class="label">Mail</span>${mailHtml}</div>
-      <div class="info-row"><span class="label">Horario</span><span class="value">${d.horario}</span></div>
-      <div class="alert-yellow">⚠️ La app no saca turnos. Contactá por teléfono o mail directamente.</div>
-    </div>
+    ${bloqueInfo}
     <div class="block" id="blockDil">
       <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
       <div style="text-align:center;padding:14px;color:#999;font-size:13px;">Cargando...</div>
