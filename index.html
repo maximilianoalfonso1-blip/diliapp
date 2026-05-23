@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://script.google.com https://script.googleusercontent.com https://docs.google.com; img-src 'self' data: blob:;">
 <title>DiliApp — Mockup</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -601,10 +602,10 @@
       <div class="title">Tus datos</div>
       <div class="subtitle">Completá para que los colegas puedan contactarte cuando necesiten diligenciar en tu zona.</div>
       <div class="info-banner">ℹ️ Los datos se publican para uso exclusivo entre colegas abogados.</div>
-      <div class="form-group"><label>Nombre y apellido *</label><input id="fNombre" type="text" placeholder="Ej: Juan Pérez"></div>
-      <div class="form-group"><label>Matrícula *</label><input id="fMatricula" type="text" placeholder="Ej: 1234"></div>
-      <div class="form-group"><label>Localidad de residencia</label><input id="fLocalidad" type="text" placeholder="Ej: Posadas"></div>
-      <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="text" placeholder="Ej: 376-4123456"></div>
+      <div class="form-group"><label>Nombre y apellido *</label><input id="fNombre" type="text" placeholder="Ej: Juan Pérez" maxlength="100" autocomplete="name"></div>
+      <div class="form-group"><label>Matrícula *</label><input id="fMatricula" type="text" placeholder="Ej: 1234" maxlength="20"></div>
+      <div class="form-group"><label>Localidad de residencia</label><input id="fLocalidad" type="text" placeholder="Ej: Posadas" maxlength="80" autocomplete="address-level2"></div>
+      <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="tel" placeholder="Ej: 3764123456" maxlength="30" autocomplete="tel"></div>
       <div class="form-group">
         <label>Zonas que podés cubrir</label>
         <input type="text" id="zonaSearch" placeholder="🔍 Buscar zona..." oninput="filtrarZonas(this.value)"
@@ -640,7 +641,7 @@
       <div style="font-size:32px; margin-bottom:10px;">⚠️</div>
       <div id="modalTitulo" style="font-size:16px; font-weight:700; color:#1a4d6f; margin-bottom:4px;">Reportar error</div>
       <div style="font-size:12px; color:#777; margin-bottom:18px;">Contactá al desarrollador para corregir el dato</div>
-      <a id="modalWaLink" href="https://wa.me/543764256652" target="_blank" style="display:block; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
+      <a id="modalWaLink" href="https://wa.me/543764256652" target="_blank" rel="noopener noreferrer" style="display:block; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
         💬 Reportar por WhatsApp
       </a>
       <button onclick="cerrarContacto()" style="background:none; border:none; color:#888; font-size:13px; cursor:pointer; text-decoration:underline;">Cerrar</button>
@@ -667,11 +668,12 @@ function parsearCSV(text) {
       else { cur += ch; }
     }
     cols.push(cur);
+    // Orden actual: Nombre(0), Matricula(1), Localidad(2), Telefono(3), Zonas(4), Fecha(5)
     return {
       nombre:    cols[0] || '',
       matricula: cols[1] || '',
-      tel:       cols[4] || '',
-      zonas:     (cols[5] || '').split(',').map(z => z.trim()).filter(Boolean)
+      tel:       cols[3] || '',
+      zonas:     (cols[4] || '').split(',').map(z => z.trim()).filter(Boolean)
     };
   });
 }
@@ -698,7 +700,9 @@ function esc(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+let _enviando = false;
 function validarFormulario() {
+  if (_enviando) return;
   const nombre    = document.getElementById('fNombre').value.trim();
   const matricula = document.getElementById('fMatricula').value.trim();
   const tel       = document.getElementById('fTel').value.trim();
@@ -706,14 +710,25 @@ function validarFormulario() {
     alert('Completá los campos obligatorios: Nombre, Matrícula y Teléfono (*)');
     return;
   }
+  if (!/\d{6,}/.test(tel.replace(/\D/g,''))) {
+    alert('El teléfono debe tener al menos 6 dígitos.');
+    return;
+  }
+  _enviando = true;
+  const btn = document.querySelector('#screen5 .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
   const zonas = Array.from(document.querySelectorAll('#zonasList input:checked'))
     .map(cb => cb.nextSibling.textContent.trim()).join(', ');
   const params = new URLSearchParams({
     nombre, matricula, tel, zonas,
     localidad: document.getElementById('fLocalidad').value.trim()
   });
-  fetch(SCRIPT_URL, { method: 'POST', body: params, mode: 'no-cors' });
-  DILIGENCIADORES_CACHE = null; // forzar recarga la próxima vez
+  fetch(SCRIPT_URL, { method: 'POST', body: params, mode: 'no-cors' })
+    .finally(() => { _enviando = false; if (btn) { btn.disabled = false; btn.textContent = 'Confirmar y publicar'; } });
+  DILIGENCIADORES_CACHE = null;
+  // Limpiar formulario
+  ['fNombre','fMatricula','fLocalidad','fTel'].forEach(id => document.getElementById(id).value = '');
+  document.querySelectorAll('#zonasList input:checked').forEach(cb => cb.checked = false);
   show('screen6');
 }
 
@@ -952,7 +967,7 @@ async function showResultadoData(nombre, circ) {
         <div class="colega-name">${esc(dil.nombre)}</div>
         <div class="colega-data">Mat. ${esc(dil.matricula)}</div>
         <div class="colega-actions">
-          <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank">💬 WhatsApp</a>
+          <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
           <a class="btn-small btn-call" href="tel:+54${telNum}">📞 Llamar</a>
         </div>
       </div>`;
