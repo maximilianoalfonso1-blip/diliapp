@@ -915,7 +915,7 @@ async function showResultadoData(nombre, circ) {
       </div>`;
   } else {
     const cards = matches.map(dil => {
-      const telNum = dil.tel.replace(/\D/g,'');
+      const telNum = String(dil.tel).replace(/\D/g,'');
       return `<div class="colega-card">
         <div class="colega-name">${dil.nombre}</div>
         <div class="colega-data">Mat. ${dil.matricula}</div>
