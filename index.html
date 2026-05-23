@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiliApp — Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #e8eaed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .header-info {
+    max-width: 420px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+  }
+  .header-info h1 { font-size: 17px; color: #1a4d6f; margin-bottom: 4px; }
+  .header-info p  { font-size: 12px; }
+
+  /* ── TELÉFONO ── */
+  .phone {
+    width: 380px;
+    max-width: 100%;
+    height: 750px;
+    background: #fff;
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 8px #1a1a1a;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 130px; height: 22px;
+    background: #1a1a1a;
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+  .status-bar {
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 12px; font-weight: 600; color: #000;
+    flex-shrink: 0;
+  }
+  .app-header {
+    background: #1a4d6f; color: white;
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+  }
+  .app-header .back { cursor: pointer; font-size: 22px; width: 28px; }
+  .app-header h2 { font-size: 16px; font-weight: 600; flex: 1; }
+
+  .screen {
+    flex: 1; overflow-y: auto;
+    display: none; flex-direction: column;
+  }
+  .screen.active { display: flex; }
+  .screen.slide-in   { animation: slideIn  0.28s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+  .screen.slide-back { animation: slideBack 0.28s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+
+  /* Botones — efecto presionado */
+  .btn-empezar:active  { transform: scale(0.96); transition: transform 0.1s; }
+  .btn-primary:active  { transform: scale(0.97); transition: transform 0.1s; }
+  .btn-secondary:active{ transform: scale(0.97); transition: transform 0.1s; }
+  .btn-contacto:active { transform: scale(0.97); transition: transform 0.1s; }
+  .item { transition: transform 0.12s, background 0.12s, border-color 0.12s; }
+  .item:active:not(.disabled) { transform: scale(0.97); background: #dceaf4 !important; }
+  .circ-card { transition: transform 0.12s, box-shadow 0.12s, border-color 0.15s; }
+  .circ-card:active { transform: scale(0.97); }
+  .floating-btn { transition: transform 0.12s, box-shadow 0.12s; }
+  .floating-btn:active { transform: scale(0.94); }
+  .btn-small:active { transform: scale(0.95); transition: transform 0.1s; }
+
+  /* ── ANIMACIONES ── */
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(48px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideBack {
+    from { opacity: 0; transform: translateX(-48px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes flotar {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-6px); }
+  }
+  @keyframes balancear {
+    0%   { transform: rotate(-8deg); }
+    50%  { transform: rotate(8deg); }
+    100% { transform: rotate(-8deg); }
+  }
+  @keyframes entrarDesdeIzq {
+    from { opacity: 0; transform: translateX(-24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes entrarDesdeAbajo {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes flotarCard {
+    0%, 100% { transform: translateX(0px); }
+    50%       { transform: translateX(4px); }
+  }
+  @keyframes pulso {
+    0%, 100% { box-shadow: 0 6px 20px rgba(26,77,111,0.3); }
+    50%       { box-shadow: 0 6px 28px rgba(26,77,111,0.55); }
+  }
+  @keyframes girarslow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* ── PANTALLA BIENVENIDA ── */
+  .welcome-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between;
+    padding: 30px 24px 24px;
+    background: #fff;
+  }
+  .welcome-top { text-align: center; }
+  .welcome-logo {
+    width: 86px; height: 86px;
+    background: linear-gradient(135deg, #1a4d6f 0%, #2a7aad 100%);
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 10px 30px rgba(26,77,111,0.35);
+    animation: flotar 3s ease-in-out infinite;
+  }
+  .logo-svg {
+    width: 50px; height: 50px;
+  }
+  .logo-balanza {
+    transform-origin: 50% 30%;
+    animation: balancear 4s ease-in-out infinite;
+  }
+  .welcome-appname {
+    font-size: 38px; font-weight: 800;
+    color: #1a4d6f; letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .welcome-tagline {
+    font-size: 17px; color: #444;
+    line-height: 1.5; margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .welcome-desc {
+    font-size: 14px; color: #777;
+    line-height: 1.6;
+  }
+  .welcome-features {
+    width: 100%;
+    display: flex; flex-direction: column; gap: 10px;
+    margin: 20px 0;
+  }
+  .feature-item {
+    display: flex; align-items: center; gap: 14px;
+    background: #f4f8fc;
+    border: 1px solid #dce8f0;
+    border-radius: 12px;
+    padding: 13px 14px;
+    opacity: 0;
+    transition: box-shadow 0.2s;
+  }
+  .feature-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 14px rgba(26,77,111,0.12);
+  }
+  .feature-item:nth-child(1) { animation: entrarDesdeIzq 0.55s ease 0.1s both, flotarCard 4s ease-in-out 0.65s infinite; }
+  .feature-item:nth-child(2) { animation: entrarDesdeIzq 0.55s ease 0.25s both, flotarCard 4s ease-in-out 1.5s infinite; }
+  .feature-item:nth-child(3) { animation: entrarDesdeIzq 0.55s ease 0.4s both, flotarCard 4s ease-in-out 2.4s infinite; }
+  .feature-icon-wrap {
+    width: 42px; height: 42px; flex-shrink: 0;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .feature-icon-wrap svg { width: 22px; height: 22px; }
+  .fi-pin  { background: linear-gradient(135deg,#1a4d6f,#2a7aad); }
+  .fi-hand { background: linear-gradient(135deg,#0d7a5f,#14b88a); }
+  .fi-bolt { background: linear-gradient(135deg,#b45309,#f59e0b); }
+  .feature-text { font-size: 13px; color: #333; line-height: 1.4; }
+  .feature-text strong { color: #1a4d6f; display: block; font-size: 13.5px; margin-bottom: 1px; }
+  .welcome-bottom { width: 100%; text-align: center; }
+  .btn-empezar {
+    width: 100%;
+    background: linear-gradient(135deg, #1a4d6f 0%, #2a7aad 100%);
+    color: white;
+    padding: 16px;
+    border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 700;
+    cursor: pointer;
+    animation: pulso 2.5s ease-in-out infinite;
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+  .btn-empezar:hover { background: linear-gradient(135deg, #133b56 0%, #1a5f8a 100%); }
+  .btn-contacto {
+    width: 100%;
+    background: none; color: #999;
+    padding: 10px;
+    border: 1px solid #e0e0e0; border-radius: 10px;
+    font-size: 13px; cursor: pointer;
+    margin-bottom: 14px;
+  }
+  .btn-contacto:hover { color: #1a4d6f; border-color: #1a4d6f; }
+  .welcome-credit {
+    font-size: 11px; color: #aaa;
+    line-height: 1.5;
+  }
+  .welcome-credit strong { color: #888; }
+
+  /* ── PROVINCIAS ── */
+  .screen-body { padding: 18px; }
+  .title { font-size: 20px; font-weight: 700; color: #1a4d6f; margin-bottom: 4px; }
+  .subtitle { color: #666; font-size: 13px; margin-bottom: 16px; line-height: 1.4; }
+
+  .item-list { list-style: none; }
+  .item {
+    padding: 14px;
+    background: #f7f9fb; border: 1px solid #e1e7ed; border-radius: 10px;
+    margin-bottom: 10px; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.15s;
+  }
+  .item:hover { background: #eef4f9; border-color: #1a4d6f; }
+  .item.disabled { opacity: 0.4; cursor: not-allowed; }
+  .item-name { font-weight: 600; color: #222; font-size: 15px; }
+  .item-sub { font-size: 12px; color: #666; margin-top: 2px; }
+  .item-arrow { color: #1a4d6f; font-size: 20px; }
+  .badge { display: inline-block; background: #1a4d6f; color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; font-weight: 600; }
+  .badge-soon { background: #999; }
+  .badge-active { background: #1a4d6f; }
+
+  /* ── CIRCUNSCRIPCIONES ── */
+  .search-box {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid #ddd; border-radius: 10px;
+    font-size: 14px; margin-bottom: 14px; outline: none;
+  }
+  .search-box:focus { border-color: #1a4d6f; }
+  .circ-card {
+    border: 1px solid #e1e7ed; border-radius: 12px;
+    margin-bottom: 12px; overflow: hidden;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .circ-card:hover { border-color: #1a4d6f; box-shadow: 0 2px 12px rgba(26,77,111,0.1); }
+  .circ-header {
+    background: #1a4d6f; color: white;
+    padding: 12px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .circ-num { font-size: 11px; opacity: 0.8; }
+  .circ-name { font-size: 15px; font-weight: 700; }
+  .circ-arrow { font-size: 18px; opacity: 0.8; }
+  .circ-body { padding: 10px 16px; background: #f7f9fb; }
+  .circ-localidades { font-size: 12px; color: #555; line-height: 1.6; }
+
+  /* ── RESULTADO ── */
+  .block {
+    background: #fff; border: 1px solid #e1e7ed; border-radius: 12px;
+    padding: 16px; margin-bottom: 14px;
+  }
+  .block-title {
+    font-size: 11px; font-weight: 700; color: #1a4d6f;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .info-row {
+    display: flex; gap: 8px; padding: 6px 0;
+    font-size: 13px; color: #444; border-bottom: 1px solid #f0f0f0;
+    overflow: hidden;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .label { color: #888; min-width: 70px; flex-shrink: 0; }
+  .info-row .value { color: #222; font-weight: 500; word-break: break-word; min-width: 0; }
+  .info-row a { color: #1a4d6f; text-decoration: none; font-weight: 500; word-break: break-all; min-width: 0; overflow-wrap: break-word; }
+  .alert-yellow {
+    background: #fff8e1; border: 1px solid #f4d570; border-radius: 8px;
+    padding: 10px 12px; font-size: 12px; color: #7a5a00;
+    margin-top: 10px; line-height: 1.4;
+  }
+  .alert-empty {
+    background: #f0f4f8; border: 1px dashed #b5c4d3; border-radius: 10px;
+    padding: 18px; text-align: center; color: #555;
+    font-size: 13px; line-height: 1.5;
+  }
+  .alert-empty strong { color: #1a4d6f; display: block; margin-bottom: 6px; }
+  .colega-card {
+    background: #f7f9fb; border: 1px solid #e1e7ed; border-radius: 10px;
+    padding: 12px; margin-bottom: 10px;
+  }
+  .colega-name { font-weight: 600; color: #1a4d6f; font-size: 14px; margin-bottom: 4px; }
+  .colega-data { font-size: 12px; color: #555; line-height: 1.5; }
+  .colega-actions { margin-top: 10px; display: flex; gap: 8px; }
+  .btn-small { flex: 1; padding: 8px; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .btn-wpp  { background: #25d366; color: white; }
+  .btn-call { background: #1a4d6f; color: white; }
+  .btn-primary {
+    width: 100%; background: #1a4d6f; color: white;
+    padding: 14px; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px;
+  }
+  .btn-secondary {
+    width: 100%; background: white; color: #1a4d6f;
+    padding: 12px; border: 1.5px solid #1a4d6f; border-radius: 10px;
+    font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px;
+  }
+  .floating-btn {
+    position: absolute; bottom: 16px; right: 16px;
+    background: #f59e0b; color: white;
+    padding: 12px 16px; border-radius: 30px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(245,158,11,0.4);
+    z-index: 50; border: none;
+  }
+
+  /* ── FORMULARIO ── */
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 5px; }
+  .form-group input { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; }
+  .form-group input:focus { border-color: #1a4d6f; }
+  .checkbox-list { max-height: 160px; overflow-y: auto; border: 1.5px solid #ddd; border-radius: 8px; padding: 8px; background: #fafbfc; }
+  .checkbox-item { padding: 7px 6px; display: flex; align-items: center; gap: 8px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .checkbox-item:hover { background: #eef4f9; }
+  .checkbox-item input { margin: 0; }
+  .terms { background: #f7f9fb; padding: 10px; border-radius: 8px; font-size: 11px; color: #555; line-height: 1.5; margin-top: 12px; }
+  .info-banner { background: #e3f2fd; border-left: 4px solid #1a4d6f; padding: 10px 12px; border-radius: 6px; font-size: 12px; color: #1a4d6f; margin-bottom: 14px; line-height: 1.4; }
+
+  /* ── ÉXITO ── */
+  .success-screen { text-align: center; padding: 40px 20px; }
+  .success-icon { font-size: 60px; margin-bottom: 16px; }
+  .success-title { font-size: 22px; font-weight: 700; color: #1a4d6f; margin-bottom: 12px; }
+  .success-text { color: #555; font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+
+  /* ── NAV BOTONES ── */
+  .nav-buttons {
+    max-width: 420px; width: 100%; margin-top: 20px;
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  }
+  .nav-btn { padding: 7px 12px; background: #fff; border: 1px solid #ccc; border-radius: 6px; font-size: 11px; cursor: pointer; color: #555; }
+  .nav-btn:hover { background: #eef4f9; }
+</style>
+</head>
+<body>
+
+<div class="header-info">
+  <h1>DiliApp — Prototipo interactivo</h1>
+  <p>Tocá los botones para navegar. Usá los accesos directos abajo para saltar a cualquier pantalla.</p>
+</div>
+
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 0: BIENVENIDA
+  ══════════════════════════════════════════ -->
+  <div class="screen active" id="screen0">
+    <div class="status-bar" style="padding-top:4px;">
+      <span>9:41</span><span>📶 🔋</span>
+    </div>
+    <div class="welcome-body">
+
+      <div class="welcome-top">
+        <div class="welcome-logo">
+          <!-- Balanza de la Justicia — se balancea sola -->
+          <svg class="logo-svg" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Mástil -->
+            <line x1="30" y1="8" x2="30" y2="52" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Base -->
+            <line x1="20" y1="52" x2="40" y2="52" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Grupo del brazo que se balancea -->
+            <g class="logo-balanza">
+              <!-- Barra horizontal -->
+              <line x1="10" y1="18" x2="50" y2="18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Cadena izquierda -->
+              <line x1="14" y1="18" x2="14" y2="30" stroke="white" stroke-width="1.5" stroke-dasharray="2 2"/>
+              <!-- Cadena derecha -->
+              <line x1="46" y1="18" x2="46" y2="30" stroke="white" stroke-width="1.5" stroke-dasharray="2 2"/>
+              <!-- Platillo izquierdo -->
+              <path d="M8 30 Q14 36 20 30" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.15)" stroke-linecap="round"/>
+              <!-- Platillo derecho -->
+              <path d="M40 30 Q46 36 52 30" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.15)" stroke-linecap="round"/>
+            </g>
+            <!-- Círculo en el pivote -->
+            <circle cx="30" cy="8" r="3" fill="white"/>
+          </svg>
+        </div>
+        <div class="welcome-appname">DiliApp</div>
+        <div class="welcome-tagline">Todo lo que necesitás para diligenciar, en un solo lugar.</div>
+        <div class="welcome-desc"><span style="text-decoration:underline;">Encontrá al instante dónde presentar una cédula judicial en cualquier municipio de Argentina.</span></div>
+      </div>
+
+      <div class="welcome-features">
+        <!-- Feature 1: Pin de ubicación -->
+        <div class="feature-item">
+          <div class="feature-icon-wrap fi-pin">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="2.5" fill="white" stroke="none"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <strong>Dependencia exacta</strong>
+            Dirección, teléfono y mail del juzgado o la Oficina de Mandamientos
+          </div>
+        </div>
+        <!-- Feature 2: Personas -->
+        <div class="feature-item">
+          <div class="feature-icon-wrap fi-hand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <strong>Red de diligencieros</strong>
+            Colegas disponibles en cada zona para cuando no podés ir vos
+          </div>
+        </div>
+        <!-- Feature 3: Rayo -->
+        <div class="feature-item">
+          <div class="feature-icon-wrap fi-bolt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="rgba(255,255,255,0.25)"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <strong>GRATIS y sin registro</strong>
+            Buscás, encontrás y listo — sin crear cuenta
+          </div>
+        </div>
+      </div>
+
+      <div class="welcome-bottom">
+        <button class="btn-empezar" onclick="show('screen1')">Empezar →</button>
+        <div class="welcome-credit">
+          Desarrollada por <strong>Alfonso Maximiliano</strong> · Abogado, Misiones
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 1: ELEGIR PROVINCIA
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen1">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header">
+      <span class="back" onclick="show('screen0')">‹</span>
+      <h2>DiliApp</h2>
+    </div>
+    <div class="screen-body" style="flex:1; overflow-y:auto;">
+      <div class="title">¿En qué provincia?</div>
+      <div class="subtitle">Elegí la provincia donde se va a notificar la cédula.</div>
+
+      <ul class="item-list">
+        <li class="item" onclick="show('screen2')">
+          <div>
+            <div class="item-name">Misiones <span class="badge badge-active">Disponible</span></div>
+            <div class="item-sub">75 municipios · 5 circunscripciones</div>
+          </div>
+          <div class="item-arrow">›</div>
+        </li>
+        <li class="item disabled">
+          <div><div class="item-name">Corrientes <span class="badge badge-soon">Próximamente</span></div></div>
+        </li>
+        <li class="item disabled">
+          <div><div class="item-name">Chaco <span class="badge badge-soon">Próximamente</span></div></div>
+        </li>
+        <li class="item disabled">
+          <div><div class="item-name">Formosa <span class="badge badge-soon">Próximamente</span></div></div>
+        </li>
+        <li class="item disabled">
+          <div><div class="item-name">Entre Ríos <span class="badge badge-soon">Próximamente</span></div></div>
+        </li>
+        <li class="item disabled">
+          <div><div class="item-name">Salta <span class="badge badge-soon">Próximamente</span></div></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 2: CIRCUNSCRIPCIONES + BUSCADOR
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen2">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header">
+      <span class="back" onclick="show('screen1')">‹</span>
+      <h2>Misiones</h2>
+    </div>
+    <div class="screen-body" style="flex:1; overflow-y:auto;">
+
+      <input type="text" class="search-box" id="searchInput"
+             placeholder="🔍 Buscar municipio directamente..."
+             oninput="buscarMunicipio(this.value)">
+
+      <!-- Resultados de búsqueda (ocultos por defecto) -->
+      <ul class="item-list" id="searchResults" style="display:none;"></ul>
+
+      <!-- Las 5 circunscripciones -->
+      <div id="circBlock">
+        <div style="font-size:12px; color:#888; margin-bottom:10px;">O elegí por circunscripción:</div>
+
+        <div class="circ-card" onclick="show('screen3', '1ra')">
+          <div class="circ-header">
+            <div>
+              <div class="circ-num">1ª Circunscripción</div>
+              <div class="circ-name">Posadas</div>
+            </div>
+            <div class="circ-arrow">›</div>
+          </div>
+          <div class="circ-body">
+            <div class="circ-localidades">Capital · Apóstoles · Candelaria · Concepción · San Ignacio · San Javier</div>
+          </div>
+        </div>
+
+        <div class="circ-card" onclick="show('screen3', '2da')">
+          <div class="circ-header">
+            <div>
+              <div class="circ-num">2ª Circunscripción</div>
+              <div class="circ-name">Oberá</div>
+            </div>
+            <div class="circ-arrow">›</div>
+          </div>
+          <div class="circ-body">
+            <div class="circ-localidades">Oberá · Cainguás · Leandro N. Alem</div>
+          </div>
+        </div>
+
+        <div class="circ-card" onclick="show('screen3', '3ra')">
+          <div class="circ-header">
+            <div>
+              <div class="circ-num">3ª Circunscripción</div>
+              <div class="circ-name">Eldorado</div>
+            </div>
+            <div class="circ-arrow">›</div>
+          </div>
+          <div class="circ-body">
+            <div class="circ-localidades">Eldorado · Libertador Gral. San Martín · Montecarlo</div>
+          </div>
+        </div>
+
+        <div class="circ-card" onclick="show('screen3', '4ta')">
+          <div class="circ-header">
+            <div>
+              <div class="circ-num">4ª Circunscripción</div>
+              <div class="circ-name">Puerto Iguazú</div>
+            </div>
+            <div class="circ-arrow">›</div>
+          </div>
+          <div class="circ-body">
+            <div class="circ-localidades">Iguazú · Andresito</div>
+          </div>
+        </div>
+
+        <div class="circ-card" onclick="show('screen3', '5ta')">
+          <div class="circ-header">
+            <div>
+              <div class="circ-num">5ª Circunscripción</div>
+              <div class="circ-name">San Vicente</div>
+            </div>
+            <div class="circ-arrow">›</div>
+          </div>
+          <div class="circ-body">
+            <div class="circ-localidades">Guaraní · San Pedro · 25 de Mayo</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 3: LISTA DE MUNICIPIOS (por circunscripción)
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen3">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header">
+      <span class="back" onclick="show('screen2')">‹</span>
+      <h2 id="circTitulo">1ª Circunscripción</h2>
+    </div>
+    <div class="screen-body" style="flex:1; overflow-y:auto;">
+      <div class="title" id="circSubtitulo">Posadas</div>
+      <div class="subtitle">Seleccioná el municipio donde querés diligenciar.</div>
+      <ul class="item-list" id="munList"></ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 4: RESULTADO — DEPENDENCIA
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen4">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header">
+      <span class="back" onclick="show('screen3')">‹</span>
+      <h2 id="resultTitulo">Posadas</h2>
+    </div>
+    <div style="padding: 18px 18px 80px; overflow-y:auto; flex:1;" id="resultBody">
+      <!-- contenido dinámico -->
+    </div>
+    <button class="floating-btn" onclick="show('screen5')">+ Anotate como diligenciador</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 5: FORMULARIO DILIGENCIADOR
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen5">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header">
+      <span class="back" onclick="show('screen4')">‹</span>
+      <h2>Anotate como diligenciador</h2>
+    </div>
+    <div style="padding:18px; overflow-y:auto; flex:1;">
+      <div class="title">Tus datos</div>
+      <div class="subtitle">Completá para que los colegas puedan contactarte cuando necesiten diligenciar en tu zona.</div>
+      <div class="info-banner">ℹ️ Los datos se publican para uso exclusivo entre colegas abogados.</div>
+      <div class="form-group"><label>Nombre y apellido</label><input type="text" placeholder="Ej: Juan Pérez"></div>
+      <div class="form-group"><label>Matrícula</label><input type="text" placeholder="Ej: 1234"></div>
+      <div class="form-group"><label>DNI</label><input type="text" placeholder="Ej: 22.333.444"></div>
+      <div class="form-group"><label>Localidad de residencia</label><input type="text" placeholder="Ej: Posadas"></div>
+      <div class="form-group"><label>Teléfono / WhatsApp</label><input type="text" placeholder="Ej: 376-4123456"></div>
+      <div class="form-group">
+        <label>Zonas que podés cubrir</label>
+        <div class="checkbox-list">
+          <label class="checkbox-item"><input type="checkbox" checked> Posadas</label>
+          <label class="checkbox-item"><input type="checkbox"> Apóstoles</label>
+          <label class="checkbox-item"><input type="checkbox"> Oberá</label>
+          <label class="checkbox-item"><input type="checkbox"> Eldorado</label>
+          <label class="checkbox-item"><input type="checkbox"> Puerto Iguazú</label>
+          <label class="checkbox-item"><input type="checkbox"> San Vicente</label>
+          <label class="checkbox-item"><input type="checkbox"> Leandro N. Alem</label>
+          <label class="checkbox-item"><input type="checkbox"> Candelaria</label>
+        </div>
+      </div>
+      <div class="terms">Al anotarme, autorizo la publicación de mis datos en la app para que colegas me contacten para diligenciamientos. Soy responsable de la veracidad de los datos cargados.</div>
+      <button class="btn-primary" onclick="show('screen6')">Confirmar y publicar</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 6: ÉXITO
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen6">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><h2>Listo</h2></div>
+    <div class="success-screen" style="flex:1;">
+      <div class="success-icon">✅</div>
+      <div class="success-title">¡Ya estás anotado!</div>
+      <div class="success-text">Tu perfil ya aparece en las zonas que elegiste.<br>Los colegas podrán contactarte directo por teléfono o WhatsApp.</div>
+      <button class="btn-primary" onclick="show('screen0')">Volver al inicio</button>
+      <button class="btn-secondary" onclick="show('screen4')">Ver cómo aparezco</button>
+    </div>
+  </div>
+
+  <!-- Modal reportar error — global, funciona desde cualquier pantalla -->
+  <div id="modalContacto" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:300; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:16px; padding:24px; margin:20px; max-width:320px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div style="font-size:32px; margin-bottom:10px;">⚠️</div>
+      <div id="modalTitulo" style="font-size:16px; font-weight:700; color:#1a4d6f; margin-bottom:4px;">Reportar error</div>
+      <div style="font-size:12px; color:#777; margin-bottom:18px;">Contactá al desarrollador para corregir el dato</div>
+      <a id="modalWaLink" href="https://wa.me/543764256652" target="_blank" style="display:block; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:10px;">
+        💬 Reportar por WhatsApp
+      </a>
+      <a href="tel:+543764256652" style="display:block; background:#1a4d6f; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
+        📞 Llamar: 376-4256652
+      </a>
+      <button onclick="cerrarContacto()" style="background:none; border:none; color:#888; font-size:13px; cursor:pointer; text-decoration:underline;">Cerrar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navegación rápida -->
+<div class="nav-buttons">
+  <button class="nav-btn" onclick="show('screen0')">0. Bienvenida</button>
+  <button class="nav-btn" onclick="show('screen1')">1. Provincias</button>
+  <button class="nav-btn" onclick="show('screen2')">2. Circunscripciones</button>
+  <button class="nav-btn" onclick="show('screen3','1ra')">3. Municipios</button>
+  <button class="nav-btn" onclick="showResultadoData('Posadas','1ra')">4a. Posadas</button>
+  <button class="nav-btn" onclick="showResultadoData('Apóstoles','1ra')">4b. Apóstoles</button>
+  <button class="nav-btn" onclick="show('screen5')">5. Formulario</button>
+  <button class="nav-btn" onclick="show('screen6')">6. Éxito</button>
+</div>
+
+<script>
+
+function mostrarContactoError(municipio) {
+  const titulo = document.getElementById('modalTitulo');
+  const waLink = document.getElementById('modalWaLink');
+  if (municipio) {
+    titulo.textContent = 'Reportar error en ' + municipio;
+    const msg = encodeURIComponent('Hola, encontré un error en DiliApp.\n\nMunicipio: ' + municipio + '\nError: ');
+    waLink.href = 'https://wa.me/543764256652?text=' + msg;
+  } else {
+    titulo.textContent = 'Reportar error';
+    waLink.href = 'https://wa.me/543764256652';
+  }
+  document.getElementById('modalContacto').style.display = 'flex';
+}
+function cerrarContacto() {
+  document.getElementById('modalContacto').style.display = 'none';
+}
+
+/* ── Datos completos — DiligenciAr Misiones ── */
+const CIRC_INFO = {
+  '1ra': { titulo: '1ª Circunscripción', cabecera: 'Posadas' },
+  '2da': { titulo: '2ª Circunscripción', cabecera: 'Oberá' },
+  '3ra': { titulo: '3ª Circunscripción', cabecera: 'Eldorado' },
+  '4ta': { titulo: '4ª Circunscripción', cabecera: 'Puerto Iguazú' },
+  '5ta': { titulo: '5ª Circunscripción', cabecera: 'San Vicente' }
+};
+
+const DATA = [
+  // 1ª — Posadas
+  { nombre:'Posadas',                 circ:'1ra', tipo:'Oficina de Mandamientos', dir:'Salta 1845, 1° Piso',                                tel:'(0376) 4446471', mail:'mandamientosynotificaciones.posadas@jusmisiones.gov.ar', horario:'L-V 7:00 a 13:00' },
+  { nombre:'Garupá',                  circ:'1ra', tipo:'Juzgado de Paz',          dir:'Av. Corrientes s/n',                                  tel:'(3764) 491070',  mail:'juzgadopaz.garupa@jusmisiones.gov.ar',                  horario:'L-V 7:00 a 13:00' },
+  { nombre:'Fachinal',                circ:'1ra', tipo:'Juzgado de Paz',          dir:'—',                                                   tel:'—',              mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Nemesio Parma',           circ:'1ra', tipo:'Juzgado de Paz',          dir:'—',                                                   tel:'—',              mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Apóstoles',               circ:'1ra', tipo:'Oficina de Mandamientos', dir:'Belgrano 520, P.B.',                                   tel:'—',              mail:'mandamientosynotificaciones.apostoles@jusmisiones.gov.ar', horario:'L-V 7:00 a 13:00' },
+  { nombre:'Azara',                   circ:'1ra', tipo:'Juzgado de Paz',          dir:'Juan José Lanusse y Trece de Junio',                  tel:'(3758) 455702',  mail:'juzgadopaz.azara@jusmisiones.gov.ar',                   horario:'L-V 7:00 a 13:00' },
+  { nombre:'San José',                circ:'1ra', tipo:'Juzgado de Paz',          dir:'Centenario 435',                                       tel:'(3758) 415356',  mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Tres Capones',            circ:'1ra', tipo:'Juzgado de Paz',          dir:'Centro Cívico',                                        tel:'(3758) 456597',  mail:'juzgadopaz.trescapones@jusmisiones.gov.ar',             horario:'L-V 7:00 a 13:00' },
+  { nombre:'Bonpland',                circ:'1ra', tipo:'Juzgado de Paz',          dir:'San Martín s/n',                                       tel:'(3754) 454540',  mail:'juzgadopaz.bonpland@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'Candelaria',              circ:'1ra', tipo:'Juzgado de Paz',          dir:'Liberación s/n (e/ Roque Peña y Mitre)',               tel:'(3764) 493223',  mail:'juzgadopaz.candelaria@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Cerro Corá',              circ:'1ra', tipo:'Juzgado de Paz',          dir:'San Martín s/n – Ruta N° 3 y 208',                     tel:'(3764) 499330',  mail:'juzgadopaz.cerrocora@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  { nombre:'Loreto',                  circ:'1ra', tipo:'Juzgado de Paz',          dir:'Los Abuelos s/n',                                      tel:'(3764) 411372',  mail:'juzgadopaz.loreto@jusmisiones.gov.ar',                  horario:'L-V 7:00 a 13:00' },
+  { nombre:'Mártires',                circ:'1ra', tipo:'Juzgado de Paz',          dir:'Lote N° 58',                                           tel:'(3764) 470421',  mail:'juzgadopaz.martires@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'Profundidad',             circ:'1ra', tipo:'Juzgado de Paz',          dir:'Municipalidad de Profundidad',                          tel:'(3764) 605992',  mail:'juzgadopaz.profundidad@jusmisiones.gov.ar',             horario:'L-V 7:00 a 13:00' },
+  { nombre:'Santa Ana',               circ:'1ra', tipo:'Juzgado de Paz',          dir:'Guacurarí casi San Martín',                            tel:'(3764) 299172',  mail:'juzgadopaz.santaana@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'Concepción de la Sierra', circ:'1ra', tipo:'Juzgado de Paz',          dir:'27 de Septiembre e/ T. Estévez y V. Sorzana',          tel:'(3755) 432248',  mail:'juzgadopaz.concepciondelasierra@jusmisiones.gov.ar',    horario:'L-V 7:00 a 13:00' },
+  { nombre:'Santa María',             circ:'1ra', tipo:'Juzgado de Paz',          dir:'—',                                                    tel:'(3758) 477071',  mail:'juzgadopaz.santamaria@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Colonia Polana',          circ:'1ra', tipo:'Juzgado de Paz',          dir:'Av. Los Inmigrantes',                                  tel:'(3743) 506648',  mail:'tjnunez@jusmisiones.gov.ar',                            horario:'L-V 7:00 a 13:00' },
+  { nombre:'Corpus Christi',          circ:'1ra', tipo:'Juzgado de Paz',          dir:'Libertad y San Martín mz. 86',                         tel:'(3764) 645642',  mail:'juzgadopaz.corpus@jusmisiones.gov.ar',                  horario:'L-V 7:00 a 13:00' },
+  { nombre:'Gobernador Roca',         circ:'1ra', tipo:'Juzgado de Paz',          dir:'J.J. Lanusse y Antártida Argentina – Centro Cívico',   tel:'(3764) 498021',  mail:'juzgadopaz.gobernadorroca@jusmisiones.gov.ar',          horario:'L-V 7:00 a 13:00' },
+  { nombre:'Hipólito Yrigoyen',       circ:'1ra', tipo:'Juzgado de Paz',          dir:'Av. San Martín s/n',                                   tel:'(3743) 524823',  mail:'juzgadopaz.hipolitoyrigoyen@jusmisiones.gov.ar',        horario:'L-V 7:00 a 13:00' },
+  { nombre:'Jardín América',          circ:'1ra', tipo:'Juzgado de Paz',          dir:'Av. Iguazú N° 458',                                    tel:'(3743) 460217',  mail:'juzgadopaz.jardinamerica@jusmisiones.gov.ar',           horario:'L-V 7:00 a 13:00' },
+  { nombre:'San Ignacio',             circ:'1ra', tipo:'Juzgado de Paz',          dir:'Lavalle N° 574',                                       tel:'(3752) 386657',  mail:'juzgadopaz.sanignacio@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Santo Pipó',              circ:'1ra', tipo:'Juzgado de Paz',          dir:'Barrio 22 Viviendas – Casa 36',                        tel:'(3764) 149028',  mail:'juzgadopaz.santopipo@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  { nombre:'General Urquiza',         circ:'1ra', tipo:'Juzgado de Paz',          dir:'Barrio Industrial – Casa N° 1',                        tel:'(3743) 462526',  mail:'juzgadopaz.generalurquiza@jusmisiones.gov.ar',          horario:'L-V 7:00 a 13:00' },
+  { nombre:'Itacaruaré',              circ:'1ra', tipo:'Juzgado de Paz',          dir:'M. Escalada y Urquiza',                                tel:'(3754) 490155',  mail:'juzgadopaz.itacaruare@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Mojón Grande',            circ:'1ra', tipo:'Juzgado de Paz',          dir:'Av. San Martín esq. Entre Ríos s/n',                   tel:'(3754) 766337',  mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'San Javier',              circ:'1ra', tipo:'Juzgado de Paz',          dir:'3 de Febrero N° 118',                                  tel:'(3754) 482453',  mail:'juzgadopaz.sanjavier@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  // 2ª — Oberá
+  { nombre:'Oberá',                   circ:'2da', tipo:'Juzgado de Paz',          dir:'Ecuador N° 1465, Planta baja',                         tel:'(3755) 421314',  mail:'juzgadopaz.obera@jusmisiones.gov.ar',                   horario:'L-V 7:00 a 13:00' },
+  { nombre:'Aristóbulo del Valle',    circ:'2da', tipo:'Juzgado de Paz',          dir:'San Martín N° 919',                                    tel:'(3755) 234696',  mail:'juzgadopaz.aristobulodelvalle@jusmisiones.gov.ar',      horario:'L-V 7:00 a 13:00' },
+  { nombre:'Campo Grande',            circ:'2da', tipo:'Juzgado de Paz',          dir:'Beltrán entre Ayacucho y Alberdi. Centro Cívico',      tel:'(3755) 655856',  mail:'juzgadopaz.campogrande@jusmisiones.gov.ar',             horario:'L-V 7:00 a 13:00' },
+  { nombre:'Dos de Mayo',             circ:'2da', tipo:'Juzgado de Paz',          dir:'San Lorenzo esq. Iguazú',                              tel:'(3755) 496050',  mail:'juzgadopaz.dosdemayo@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  { nombre:'Ruiz de Montoya',         circ:'2da', tipo:'Juzgado de Paz',          dir:'Av. Los Inmigrantes s/n',                              tel:'(3743) 507461',  mail:'juzgadopaz.ruizdemontoya@jusmisiones.gov.ar',           horario:'L-V 7:00 a 13:00' },
+  { nombre:'Almafuerte',              circ:'2da', tipo:'Juzgado de Paz',          dir:'Mz 15 Solar B',                                        tel:'(3754) 416275',  mail:'juzgadopaz.almafuerte@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Arroyo del Medio',        circ:'2da', tipo:'Juzgado de Paz',          dir:'Ruta Prov. N° 30 – Lote N° 188',                       tel:'(3754) 508641',  mail:'juzgadopaz.arroyodelmedio@jusmisiones.gov.ar',          horario:'L-V 7:00 a 13:00' },
+  { nombre:'Caá Yarí',                circ:'2da', tipo:'Juzgado de Paz',          dir:'Ruta Prov. 225 Lote 44 Mz 5 Solar D',                  tel:'(3754) 433222',  mail:'juzgadopaz.caayari@jusmisiones.gov.ar',                 horario:'L-V 7:00 a 13:00' },
+  { nombre:'Cerro Azul',              circ:'2da', tipo:'Juzgado de Paz',          dir:'Maipú y Zukowski',                                     tel:'(3764) 494130',  mail:'juzgadopaz.cerroazul@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  { nombre:'Dos Arroyos',             circ:'2da', tipo:'Juzgado de Paz',          dir:'Lote 88, Centro Cívico',                               tel:'(3754) 660958',  mail:'juzgadopaz.dosaroyos@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  { nombre:'Gobernador López',        circ:'2da', tipo:'Juzgado de Paz',          dir:'Ruta Provincial 215 s/n',                              tel:'(3754) 494045',  mail:'juzgadopaz.gobernadorlopez@jusmisiones.gov.ar',         horario:'L-V 7:00 a 13:00' },
+  { nombre:'Leandro N. Alem',         circ:'2da', tipo:'Juzgado de Paz',          dir:'25 de Mayo N° 131',                                    tel:'(3754) 420124',  mail:'juzgadopaz.alem@jusmisiones.gov.ar',                    horario:'L-V 7:00 a 13:00' },
+  { nombre:'Olegario V. Andrade',     circ:'2da', tipo:'Juzgado de Paz',          dir:'San Martín s/n',                                       tel:'(3764) 674009',  mail:'juzgadopaz.ovandrade@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  { nombre:'Campo Ramón',             circ:'2da', tipo:'Juzgado de Paz',          dir:'Bicentenario s/n',                                     tel:'(3755) 658957',  mail:'juzgadopaz.camporamon@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Campo Viera',             circ:'2da', tipo:'Juzgado de Paz',          dir:'Av. Del Té N° 40',                                     tel:'(3755) 497051',  mail:'juzgadopaz.campoviera@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Colonia Alberdi',         circ:'2da', tipo:'Juzgado de Paz',          dir:'Av. Río Uruguay s/n',                                  tel:'(3754) 477100',  mail:'juzgadopaz.coloniaalberdi@jusmisiones.gov.ar',          horario:'L-V 7:00 a 13:00' },
+  { nombre:'Florentino Ameghino',     circ:'2da', tipo:'Juzgado de Paz',          dir:'Lote 144 (Centro Cívico)',                             tel:'(3755) 682037',  mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'General Alvear',          circ:'2da', tipo:'Juzgado de Paz',          dir:'Lote 162 Sección 5',                                   tel:'(3755) 428829',  mail:'juzgadopaz.generalalvear@jusmisiones.gov.ar',           horario:'L-V 7:00 a 13:00' },
+  { nombre:'Guaraní',                 circ:'2da', tipo:'Juzgado de Paz',          dir:'San Martín s/n',                                       tel:'(3755) 401334',  mail:'juzgadopaz.guarani@jusmisiones.gov.ar',                 horario:'L-V 7:00 a 13:00' },
+  { nombre:'Los Helechos',            circ:'2da', tipo:'Juzgado de Paz',          dir:'Lote N° 8 – Secc. 13 – Salón Múltiple',               tel:'(3764) 625687',  mail:'pnbida@jusmisiones.gov.ar',                             horario:'L-V 7:00 a 13:00' },
+  { nombre:'Panambí',                 circ:'2da', tipo:'Juzgado de Paz',          dir:'Av. Federico Puerta Km 8 s/n',                         tel:'(3754) 492094',  mail:'juzgadopaz.panambi@jusmisiones.gov.ar',                 horario:'L-V 7:00 a 13:00' },
+  { nombre:'San Martín',              circ:'2da', tipo:'Juzgado de Paz',          dir:'Bo 50 Viv. Casa 14',                                   tel:'(3755) 248402',  mail:'juzgadopaz.sanmartin@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  // 3ª — Eldorado
+  { nombre:'Eldorado',                circ:'3ra', tipo:'Juzgado de Paz',          dir:'Cuyo N° 205',                                          tel:'(3751) 421474',  mail:'juzgadopaz.eldorado@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'9 de Julio',              circ:'3ra', tipo:'Juzgado de Paz',          dir:'Ruta Prov. 17 Km 23, mz. 65, fracc. G',               tel:'(3751) 417634',  mail:'juzgadopaz.9dejulio@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'Colonia Delicia',         circ:'3ra', tipo:'Juzgado de Paz',          dir:'—',                                                    tel:'—',              mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Colonia Victoria',        circ:'3ra', tipo:'Juzgado de Paz',          dir:'Valentín Silva y D.F. Sarmiento',                      tel:'(3751) 401170',  mail:'egleguizamo@jusmisiones.gov.ar',                        horario:'L-V 7:00 a 13:00' },
+  { nombre:'Mado',                    circ:'3ra', tipo:'Juzgado de Paz',          dir:'—',                                                    tel:'—',              mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Santiago de Liniers',     circ:'3ra', tipo:'Juzgado de Paz',          dir:'Ruta 17 Km 29 (sum de la municipalidad)',              tel:'(3751) 415570',  mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Bernardo de Irigoyen',    circ:'3ra', tipo:'Juzgado de Paz',          dir:'Av. Libertador 170',                                   tel:'(3741) 415037',  mail:'juzgadopaz.bernardoirigoyen@jusmisiones.gov.ar',        horario:'L-V 7:00 a 13:00' },
+  { nombre:'Dos Hermanas',            circ:'3ra', tipo:'Juzgado de Paz',          dir:'—',                                                    tel:'—',              mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'San Antonio',             circ:'3ra', tipo:'Juzgado de Paz',          dir:'Soberanía s/n',                                        tel:'(3741) 631642',  mail:'juzgadopaz.sanantonio@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Capioví',                 circ:'3ra', tipo:'Juzgado de Paz',          dir:'Ruta 12 N° 246',                                       tel:'(3743) 493014',  mail:'juzgadopaz.capiovi@jusmisiones.gov.ar',                 horario:'L-V 7:00 a 13:00' },
+  { nombre:'Capiovicito',             circ:'3ra', tipo:'Juzgado de Paz',          dir:'—',                                                    tel:'—',              mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'El Alcázar',              circ:'3ra', tipo:'Juzgado de Paz',          dir:'Av. Belgrano y Colón',                                 tel:'(3751) 496190',  mail:'juzgadopaz.elalcazar@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  { nombre:'Garuhapé',                circ:'3ra', tipo:'Juzgado de Paz',          dir:'Independencia esq. San Martín y Av. Las Américas',     tel:'(3743) 520672',  mail:'juzgadopaz.garuhape@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'Puerto Leoni',            circ:'3ra', tipo:'Juzgado de Paz',          dir:'Ruta Prov. N° 8 y Juan D. Perón',                      tel:'(3755) 687661',  mail:'juzgadopaz.puertoleoni@jusmisiones.gov.ar',             horario:'L-V 7:00 a 13:00' },
+  { nombre:'Puerto Rico',             circ:'3ra', tipo:'Juzgado de Paz',          dir:'Sgo. de Liniers y Pasaje Malvinas',                    tel:'(3743) 476038',  mail:'juzgadopaz.puertorico@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Ruiz de Montoya',         circ:'3ra', tipo:'Juzgado de Paz',          dir:'Av. Los Inmigrantes s/n',                              tel:'(3743) 507461',  mail:'juzgadopaz.ruizdemontoya@jusmisiones.gov.ar',           horario:'L-V 7:00 a 13:00' },
+  { nombre:'Caraguatay',              circ:'3ra', tipo:'Juzgado de Paz',          dir:'Centro Cívico – Km 8 – Edificio Municipal',            tel:'(3751) 494155',  mail:'juzgadopaz.caraguatay@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Montecarlo',              circ:'3ra', tipo:'Juzgado de Paz',          dir:'Mitre esq. Av. Brasil',                                tel:'(3751) 480071',  mail:'juzgadopaz.montecarlo@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Puerto Piray',            circ:'3ra', tipo:'Juzgado de Paz',          dir:'Juan José Paso N° 139',                                tel:'(3751) 477048',  mail:'juzgadopaz.puertopiray@jusmisiones.gov.ar',             horario:'L-V 7:00 a 13:00' },
+  // 4ª — Puerto Iguazú
+  { nombre:'Puerto Iguazú',           circ:'4ta', tipo:'Juzgado de Paz',          dir:'Alvar Núñez N° 175',                                   tel:'(3757) 461641',  mail:'juzgadopaz.puertoiguazu@jusmisiones.gov.ar',            horario:'L-V 7:00 a 13:00' },
+  { nombre:'Puerto Esperanza',        circ:'4ta', tipo:'Juzgado de Paz',          dir:'San Luis y Córdoba',                                   tel:'(3757) 480294',  mail:'juzgadopaz.puertoesperanza@jusmisiones.gov.ar',         horario:'L-V 7:00 a 13:00' },
+  { nombre:'Comandante Andresito',    circ:'4ta', tipo:'Juzgado de Paz',          dir:'EEUU s/n',                                             tel:'(3757) 497030',  mail:'juzgadopaz.comandanteandresito@jusmisiones.gov.ar',     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Puerto Libertad',         circ:'4ta', tipo:'Juzgado de Paz',          dir:'Av. Juan D. Perón N° 335',                             tel:'(3757) 496033',  mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Wanda',                   circ:'4ta', tipo:'Juzgado de Paz',          dir:'Av. Los Pinos 1429',                                   tel:'(3757) 519764',  mail:'juzgadopaz.coloniawanda@jusmisiones.gov.ar',            horario:'L-V 7:00 a 13:00' },
+  // 5ª — San Vicente
+  { nombre:'San Vicente',             circ:'5ta', tipo:'Juzgado de Paz',          dir:'Ricardo Balbín N° 729',                                tel:'(3755) 504824',  mail:'juzgadopaz.sanvicente@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'El Soberbio',             circ:'5ta', tipo:'Juzgado de Paz',          dir:'Lavalle y Capdevila',                                  tel:'(3755) 673797',  mail:'juzgadopaz.elsoberbio@jusmisiones.gov.ar',              horario:'L-V 7:00 a 13:00' },
+  { nombre:'Fracrán',                 circ:'5ta', tipo:'Juzgado de Paz',          dir:'—',                                                    tel:'—',              mail:'—',                                                     horario:'L-V 7:00 a 13:00' },
+  { nombre:'Pozo Azul',               circ:'5ta', tipo:'Juzgado de Paz',          dir:'Edificio Acción Social – Ruta 17',                     tel:'(3751) 609205',  mail:'juzgadopaz.pozoazul@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'San Pedro',               circ:'5ta', tipo:'Juzgado de Paz',          dir:'25 de Mayo s/n',                                       tel:'(3751) 470160',  mail:'juzgadopaz.sanpedro@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'25 de Mayo',              circ:'5ta', tipo:'Juzgado de Paz',          dir:'Rivadavia 330',                                        tel:'(3755) 493172',  mail:'juzgadopaz.25demayo@jusmisiones.gov.ar',                horario:'L-V 7:00 a 13:00' },
+  { nombre:'Alba Posse',              circ:'5ta', tipo:'Juzgado de Paz',          dir:'Belgrano s/n',                                         tel:'(3755) 234584',  mail:'juzgadopaz.albaposse@jusmisiones.gov.ar',               horario:'L-V 7:00 a 13:00' },
+  { nombre:'Colonia Aurora',          circ:'5ta', tipo:'Juzgado de Paz',          dir:'Av. San Martín e Inmigrante',                          tel:'(3764) 280735',  mail:'juzgadopaz.coloniaaurora@jusmisiones.gov.ar',           horario:'L-V 7:00 a 13:00' },
+];
+
+let circActual = '1ra';
+let municipioActual = null;
+const SCREEN_ORDER = ['screen0','screen1','screen2','screen3','screen4','screen5','screen6'];
+let pantActual = 'screen0';
+
+/* ── Navegación con animación ── */
+function show(id, circ) {
+  const outIdx = SCREEN_ORDER.indexOf(pantActual);
+  const inIdx  = SCREEN_ORDER.indexOf(id);
+  const esAtras = inIdx < outIdx;
+
+  document.querySelectorAll('.screen').forEach(s =>
+    s.classList.remove('active','slide-in','slide-back')
+  );
+
+  const t = document.getElementById(id);
+  if (t) {
+    t.classList.add('active', esAtras ? 'slide-back' : 'slide-in');
+    t.scrollTop = 0;
+    pantActual = id;
+  }
+
+  if (id === 'screen2') {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('circBlock').style.display = 'block';
+  }
+
+  if (id === 'screen3' && circ) {
+    circActual = circ;
+    renderMunicipios(circ);
+  }
+}
+
+function showResultadoData(nombre, circ) {
+  const d = DATA.find(r => r.nombre === nombre && (!circ || r.circ === circ))
+         || DATA.find(r => r.nombre === nombre);
+  if (!d) return;
+  municipioActual = d.nombre;
+  const info = CIRC_INFO[d.circ];
+  document.getElementById('resultTitulo').textContent = d.nombre;
+
+  const telHtml  = d.tel  !== '—' ? `<a href="tel:${d.tel}">📞 ${d.tel}</a>`         : `<span class="value">— no publicado</span>`;
+  const mailHtml = d.mail !== '—' ? `<a href="mailto:${d.mail}">✉️ ${d.mail}</a>`    : `<span class="value">— no publicado</span>`;
+
+  document.getElementById('resultBody').innerHTML = `
+    <div class="title">${d.nombre}</div>
+    <div class="subtitle">${info.titulo}</div>
+    <div class="block">
+      <div class="block-title"><span>🏛️</span> ¿Dónde se diligencia?</div>
+      <div class="info-row"><span class="label">Tipo</span><span class="value">${d.tipo}</span></div>
+      <div class="info-row"><span class="label">Dirección</span><span class="value">${d.dir}</span></div>
+      <div class="info-row"><span class="label">Teléfono</span>${telHtml}</div>
+      <div class="info-row"><span class="label">Mail</span>${mailHtml}</div>
+      <div class="info-row"><span class="label">Horario</span><span class="value">${d.horario}</span></div>
+      <div class="alert-yellow">⚠️ La app no saca turnos. Contactá por teléfono o mail directamente.</div>
+    </div>
+    <div class="block">
+      <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
+      <div class="alert-empty">
+        <strong>Todavía no hay diligencieros anotados</strong>
+        ¿Sos colega de la zona? Anotate y aparecé acá.
+        <button class="btn-primary" onclick="show('screen5')">+ Anotate como diligenciador</button>
+      </div>
+    </div>
+    <button class="btn-contacto" style="margin-top:4px;" onclick="mostrarContactoError('${d.nombre}')">⚠️ Reportar error en esta ficha</button>`;
+
+  pantActual = 'screen3';
+  show('screen4');
+}
+
+/* ── Render municipios por circunscripción ── */
+function renderMunicipios(circ) {
+  const info = CIRC_INFO[circ];
+  document.getElementById('circTitulo').textContent = info.titulo;
+  document.getElementById('circSubtitulo').textContent = info.cabecera;
+  const municipios = DATA.filter(r => r.circ === circ);
+  const list = document.getElementById('munList');
+  list.innerHTML = municipios.map(r =>
+    `<li class="item" onclick="showResultadoData('${r.nombre.replace(/'/g,"\\'")}','${r.circ}')">
+      <div>
+        <div class="item-name">${r.nombre}</div>
+        <div class="item-sub">${info.titulo} · ${r.tipo}</div>
+      </div>
+      <div class="item-arrow">›</div>
+    </li>`
+  ).join('');
+}
+
+/* ── Buscador global en pantalla 2 ── */
+function buscarMunicipio(q) {
+  const searchRes = document.getElementById('searchResults');
+  const circBlock = document.getElementById('circBlock');
+  q = q.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  if (!q) {
+    searchRes.style.display = 'none';
+    circBlock.style.display = 'block';
+    return;
+  }
+  circBlock.style.display = 'none';
+  const matches = DATA.filter(r =>
+    r.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').includes(q)
+  );
+  if (!matches.length) {
+    searchRes.innerHTML = '<li style="padding:14px;color:#888;font-size:13px;">No encontramos esa localidad. Revisá la ortografía o elegí por circunscripción.</li>';
+  } else {
+    searchRes.innerHTML = matches.map(r => {
+      const info = CIRC_INFO[r.circ];
+      return `<li class="item" onclick="showResultadoData('${r.nombre.replace(/'/g,"\\'")}','${r.circ}')">
+        <div>
+          <div class="item-name">${r.nombre}</div>
+          <div class="item-sub">${info.titulo}</div>
+        </div>
+        <div class="item-arrow">›</div>
+      </li>`;
+    }).join('');
+  }
+  searchRes.style.display = 'block';
+}
+</script>
+</body>
+</html>
