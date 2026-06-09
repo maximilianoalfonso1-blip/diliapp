@@ -7,7 +7,15 @@
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), midi=(), interest-cohort=()">
-<title>DiliApp — Mockup</title>
+<title>DiliApp</title>
+<meta name="application-name" content="DiliApp">
+<meta name="apple-mobile-web-app-title" content="DiliApp">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="DiliApp: encontrá al instante dónde diligenciar una cédula judicial en cualquier municipio de Misiones, y contactá colegas diligencieros de la zona.">
+<meta name="theme-color" content="#1a4d6f">
+<meta property="og:title" content="DiliApp">
+<meta property="og:description" content="Dónde diligenciar cédulas judiciales en Misiones y red de diligencieros por zona.">
+<meta property="og:type" content="website">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
   body {
@@ -918,7 +926,7 @@ function cerrarContacto() {
   document.getElementById('modalContacto').style.display = 'none';
 }
 
-/* ── Datos completos — DiligenciAr Misiones ── */
+/* ── Datos completos — DiliApp Misiones ── */
 const CIRC_INFO = {
   '1ra': { titulo: '1ª Circunscripción', cabecera: 'Posadas' },
   '2da': { titulo: '2ª Circunscripción', cabecera: 'Oberá' },
@@ -1109,7 +1117,7 @@ async function showResultadoData(nombre, circ) {
         <div class="info-row"><span class="label">Teléfono</span>${telHtml}</div>
         <div class="info-row"><span class="label">Mail</span>${mailHtml}</div>
         <div class="info-row"><span class="label">Horario</span><span class="value">${esc(d.horario)}</span></div>
-        <div class="alert-yellow">${ico('alerta',14)}<span>Esta app no gestiona turnos: contactá directo por teléfono o mail.</span></div>
+        <div class="alert-yellow">${ico('alerta',14)}<span>Esta app no gestiona turnos. Para diligenciar, enviá por mail tus datos y los de la cédula que querés diligenciar, así se determina la zona.</span></div>
       </div>`;
 
   document.getElementById('resultBody').innerHTML = `
