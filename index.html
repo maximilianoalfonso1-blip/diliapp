@@ -303,6 +303,21 @@
   .form-group label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 5px; }
   .form-group input { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; }
   .form-group input:focus { border-color: #1a4d6f; }
+  /* Validación inline */
+  .form-group input.input-error,
+  .checkbox-list.input-error { border-color: #c0392b; background: #fef6f4; }
+  .field-error {
+    display: none; color: #b32218; font-size: 12px; margin-top: 5px;
+    align-items: flex-start; gap: 5px; line-height: 1.35;
+  }
+  .field-error.show { display: flex; }
+  .field-error svg { margin-top: 1px; }
+  #formAviso {
+    display: none; background: #fdecea; border: 1px solid #f3c2bc;
+    color: #8a1c10; border-radius: 8px; padding: 10px 12px;
+    font-size: 12.5px; line-height: 1.4; margin-bottom: 14px;
+  }
+  #formAviso.show { display: block; }
   .checkbox-list { max-height: 160px; overflow-y: auto; border: 1.5px solid #ddd; border-radius: 8px; padding: 8px; background: #fafbfc; }
   .checkbox-item { padding: 7px 6px; display: flex; align-items: center; gap: 8px; border-radius: 6px; cursor: pointer; font-size: 13px; }
   .checkbox-item:hover { background: #eef4f9; }
@@ -598,15 +613,17 @@
       <div class="title">Tus datos</div>
       <div class="subtitle">Completá para que los colegas puedan contactarte cuando necesiten diligenciar en tu zona.</div>
       <div class="info-banner">ℹ️ Los datos se publican para uso exclusivo entre colegas abogados.</div>
-      <div class="form-group"><label>Nombre y apellido *</label><input id="fNombre" type="text" placeholder="Ej: Juan Pérez" maxlength="100" autocomplete="name" required></div>
-      <div class="form-group"><label>Matrícula *</label><input id="fMatricula" type="text" placeholder="Ej: 1234" maxlength="10" inputmode="numeric" pattern="[0-9]*" required></div>
+      <div id="formAviso"></div>
+      <div class="form-group"><label>Nombre y apellido *</label><input id="fNombre" type="text" placeholder="Ej: Juan Pérez" maxlength="100" autocomplete="name" required aria-describedby="errNombre"><div class="field-error" id="errNombre"></div></div>
+      <div class="form-group"><label>Matrícula *</label><input id="fMatricula" type="text" placeholder="Ej: 1234" maxlength="10" inputmode="numeric" pattern="[0-9]*" required aria-describedby="errMatricula"><div class="field-error" id="errMatricula"></div></div>
       <div class="form-group"><label>Localidad de residencia</label><input id="fLocalidad" type="text" placeholder="Ej: Posadas" maxlength="80" autocomplete="address-level2"></div>
-      <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="tel" placeholder="Ej: 3764123456" maxlength="30" autocomplete="tel" inputmode="tel" required></div>
+      <div class="form-group"><label>Teléfono / WhatsApp *</label><input id="fTel" type="tel" placeholder="Ej: 3764123456" maxlength="30" autocomplete="tel" inputmode="tel" required aria-describedby="errTel"><div class="field-error" id="errTel"></div></div>
       <div class="form-group">
         <label>Zonas que podés cubrir</label>
         <input type="text" id="zonaSearch" placeholder="🔍 Buscar zona..." oninput="filtrarZonas(this.value)"
           style="width:100%; padding:8px 10px; border:1.5px solid #ddd; border-radius:8px; font-size:13px; margin-bottom:6px; outline:none; font-family:inherit;">
         <div class="checkbox-list" id="zonasList"></div>
+        <div class="field-error" id="errZonas"></div>
       </div>
       <div style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
         <label>Dejar vacío<input id="fWebsite" type="text" tabindex="-1" autocomplete="off"></label>
@@ -619,9 +636,10 @@
         Responsable del tratamiento: Dr. Maximiliano D. Alfonso, abogado (Misiones).
       </div>
       <label style="display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-size:12px; color:#555; cursor:pointer;">
-        <input id="fConsentimiento" type="checkbox" style="margin-top:3px;">
+        <input id="fConsentimiento" type="checkbox" style="margin-top:3px;" aria-describedby="errConsent">
         <span>Leí y acepto el tratamiento de mis datos conforme a la Ley 25.326.</span>
       </label>
+      <div class="field-error" id="errConsent"></div>
       <button class="btn-primary" onclick="validarFormulario()">Confirmar y publicar</button>
     </div>
   </div>
@@ -770,6 +788,23 @@ function registrarEnvio() {
   } catch(e) {}
 }
 
+/* ── Validación inline (reemplaza los alert() nativos) ── */
+function limpiarErroresForm() {
+  document.querySelectorAll('#screen5 .field-error').forEach(e => { e.classList.remove('show'); e.innerHTML = ''; });
+  document.querySelectorAll('#screen5 .input-error').forEach(e => e.classList.remove('input-error'));
+  const av = document.getElementById('formAviso');
+  if (av) { av.classList.remove('show'); av.textContent = ''; }
+}
+function marcarErrorCampo(errId, msg, inputId) {
+  const e = document.getElementById(errId);
+  if (e) { e.innerHTML = ico('alerta',13) + '<span>' + esc(msg) + '</span>'; e.classList.add('show'); }
+  if (inputId) { const inp = document.getElementById(inputId); if (inp) inp.classList.add('input-error'); }
+}
+function avisoGeneralForm(msg) {
+  const av = document.getElementById('formAviso');
+  if (av) { av.textContent = msg; av.classList.add('show'); av.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+}
+
 async function validarFormulario() {
   if (_enviando) return;
 
@@ -777,16 +812,16 @@ async function validarFormulario() {
   const hp = document.getElementById('fWebsite');
   if (hp && hp.value) { show('screen6'); return; }
 
-  // Tiempo mínimo desde que se abrió el form
+  limpiarErroresForm();
+
+  // Avisos generales (no atados a un campo)
   if (_formAbiertoEn && (Date.now() - _formAbiertoEn) < TIEMPO_MIN_FORMULARIO_MS) {
-    alert('Esperá unos segundos antes de enviar el formulario.');
+    avisoGeneralForm('Esperá unos segundos antes de enviar el formulario.');
     return;
   }
-
-  // Rate limit por navegador
   const envios = obtenerEnviosRecientes();
   if (envios.length >= RATE_LIMIT_MAX) {
-    alert('Ya enviaste varios registros desde este dispositivo. Probá de nuevo más tarde.');
+    avisoGeneralForm('Ya enviaste varios registros desde este dispositivo. Probá de nuevo más tarde.');
     return;
   }
 
@@ -794,29 +829,32 @@ async function validarFormulario() {
   const matricula = document.getElementById('fMatricula').value.trim();
   const tel       = document.getElementById('fTel').value.trim();
   const consent   = document.getElementById('fConsentimiento');
-  if (!nombre || !matricula || !tel) {
-    alert('Completá los campos obligatorios: Nombre, Matrícula y Teléfono (*)');
-    return;
+
+  // Validar todos los campos y mostrar todos los errores a la vez
+  let primerError = null;
+  const fallar = (errId, msg, inputId) => {
+    marcarErrorCampo(errId, msg, inputId);
+    if (!primerError) primerError = inputId || errId;
+  };
+
+  if (!nombre) fallar('errNombre', 'Ingresá tu nombre y apellido.', 'fNombre');
+  else if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s.'-]{2,100}$/.test(nombre)) fallar('errNombre', 'Solo letras, espacios, apóstrofo y guion (2 a 100 caracteres).', 'fNombre');
+
+  if (!matricula) fallar('errMatricula', 'Ingresá tu matrícula.', 'fMatricula');
+  else if (!/^\d{1,10}$/.test(matricula)) fallar('errMatricula', 'La matrícula debe ser numérica (solo dígitos).', 'fMatricula');
+
+  if (!tel) fallar('errTel', 'Ingresá tu teléfono.', 'fTel');
+  else if (!/^[0-9+()\s-]{6,30}$/.test(tel) || !/\d{6,}/.test(tel.replace(/\D/g,''))) fallar('errTel', 'Al menos 6 dígitos. Solo 0-9, +, -, espacios y paréntesis.', 'fTel');
+
+  if (!consent || !consent.checked) fallar('errConsent', 'Tenés que aceptar el tratamiento de datos (Ley 25.326) para continuar.', 'fConsentimiento');
+
+  if (document.querySelectorAll('#zonasList input:checked').length > 30) {
+    fallar('errZonas', 'Podés cubrir hasta 30 zonas. Si necesitás más, escribí al desarrollador.', null);
   }
-  if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s.'-]{2,100}$/.test(nombre)) {
-    alert('El nombre solo puede contener letras, espacios, apóstrofo y guion.');
-    return;
-  }
-  if (!/^\d{1,10}$/.test(matricula)) {
-    alert('La matrícula debe ser numérica (solo dígitos).');
-    return;
-  }
-  if (!/^[0-9+()\s-]{6,30}$/.test(tel) || !/\d{6,}/.test(tel.replace(/\D/g,''))) {
-    alert('El teléfono debe tener al menos 6 dígitos y solo caracteres válidos (0-9, +, -, espacios, paréntesis).');
-    return;
-  }
-  if (!consent || !consent.checked) {
-    alert('Tenés que aceptar el tratamiento de datos personales (Ley 25.326) para continuar.');
-    return;
-  }
-  const zonasMarcadas = document.querySelectorAll('#zonasList input:checked').length;
-  if (zonasMarcadas > 30) {
-    alert('Podés cubrir hasta 30 zonas como máximo. Si necesitás más, contactá al desarrollador.');
+
+  if (primerError) {
+    const el = document.getElementById(primerError);
+    if (el) { try { el.focus({ preventScroll: true }); } catch(e) {} el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     return;
   }
 
@@ -847,7 +885,7 @@ async function validarFormulario() {
     document.querySelectorAll('#zonasList input:checked').forEach(cb => cb.checked = false);
     show('screen6');
   } catch(e) {
-    alert('No pudimos enviar tus datos. Revisá tu conexión y probá de nuevo.');
+    avisoGeneralForm('No pudimos enviar tus datos. Revisá tu conexión y probá de nuevo.');
   } finally {
     _enviando = false;
     if (btn) { btn.disabled = false; btn.textContent = 'Confirmar y publicar'; }
@@ -1227,7 +1265,22 @@ document.addEventListener('keydown', (e) => {
   el.click();
 });
 
-window.addEventListener('DOMContentLoaded', () => marcarFocuseables(document));
+window.addEventListener('DOMContentLoaded', () => {
+  marcarFocuseables(document);
+  // Al corregir un campo, limpiar su error inline
+  const limpiar = (inputId, errId) => {
+    const inp = document.getElementById(inputId);
+    const err = document.getElementById(errId);
+    if (!inp) return;
+    const ev = inp.type === 'checkbox' ? 'change' : 'input';
+    inp.addEventListener(ev, () => {
+      inp.classList.remove('input-error');
+      if (err) { err.classList.remove('show'); err.innerHTML = ''; }
+    });
+  };
+  limpiar('fNombre','errNombre'); limpiar('fMatricula','errMatricula');
+  limpiar('fTel','errTel'); limpiar('fConsentimiento','errConsent');
+});
 </script>
 </body>
 </html>
