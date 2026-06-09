@@ -458,15 +458,6 @@
         <li class="item disabled">
           <div><div class="item-name">Chaco <span class="badge badge-soon">Próximamente</span></div></div>
         </li>
-        <li class="item disabled">
-          <div><div class="item-name">Formosa <span class="badge badge-soon">Próximamente</span></div></div>
-        </li>
-        <li class="item disabled">
-          <div><div class="item-name">Entre Ríos <span class="badge badge-soon">Próximamente</span></div></div>
-        </li>
-        <li class="item disabled">
-          <div><div class="item-name">Salta <span class="badge badge-soon">Próximamente</span></div></div>
-        </li>
       </ul>
     </div>
   </div>
@@ -1030,38 +1021,7 @@ function show(id, circ) {
     circActual = circ;
     renderMunicipios(circ);
   }
-
-  guardarEstadoNavegacion();
 }
-
-const ESTADO_KEY = 'diliapp_estado';
-function guardarEstadoNavegacion() {
-  try {
-    // Solo persistimos pantallas informativas (no form ni success ni inicio)
-    if (pantActual === 'screen2' || pantActual === 'screen3') {
-      localStorage.setItem(ESTADO_KEY, JSON.stringify({ pant: pantActual, circ: circActual }));
-    } else if (pantActual === 'screen4' && municipioActual) {
-      localStorage.setItem(ESTADO_KEY, JSON.stringify({ pant: 'screen4', mun: municipioActual, circ: circActual }));
-    } else {
-      localStorage.removeItem(ESTADO_KEY);
-    }
-  } catch(e) {}
-}
-
-function restaurarEstadoNavegacion() {
-  try {
-    const raw = localStorage.getItem(ESTADO_KEY);
-    if (!raw) return;
-    const s = JSON.parse(raw);
-    if (s.pant === 'screen2') { show('screen2'); }
-    else if (s.pant === 'screen3' && s.circ) { show('screen3', s.circ); }
-    else if (s.pant === 'screen4' && s.mun) {
-      show('screen3', s.circ);
-      showResultadoData(s.mun, s.circ);
-    }
-  } catch(e) {}
-}
-window.addEventListener('DOMContentLoaded', restaurarEstadoNavegacion);
 
 async function showResultadoData(nombre, circ) {
   const d = DATA.find(r => r.nombre === nombre && (!circ || r.circ === circ))
