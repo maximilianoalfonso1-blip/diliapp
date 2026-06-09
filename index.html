@@ -338,6 +338,16 @@
   }
   .nav-btn { padding: 7px 12px; background: #fff; border: 1px solid #ccc; border-radius: 6px; font-size: 11px; cursor: pointer; color: #555; }
   .nav-btn:hover { background: #eef4f9; }
+
+  /* ── FOCO VISIBLE (accesibilidad por teclado) ── */
+  .item:focus-visible, .circ-card:focus-visible, .back:focus-visible,
+  .btn-empezar:focus-visible, .btn-primary:focus-visible, .btn-secondary:focus-visible,
+  .btn-contacto:focus-visible, .btn-small:focus-visible, .floating-btn:focus-visible,
+  .search-box:focus-visible, [role="button"]:focus-visible {
+    outline: 3px solid #2a7aad; outline-offset: 2px;
+    border-radius: 8px;
+  }
+  .item:focus-visible { background: #eef4f9; }
 </style>
 </head>
 <body>
@@ -1174,6 +1184,7 @@ function renderMunicipios(circ) {
       <div class="item-arrow">›</div>
     </li>`
   ).join('');
+  marcarFocuseables(list);
 }
 
 /* ── Buscador global en pantalla 2 ── */
@@ -1205,7 +1216,33 @@ function buscarMunicipio(q) {
     }).join('');
   }
   searchRes.style.display = 'block';
+  marcarFocuseables(searchRes);
 }
+
+/* ── Accesibilidad por teclado ──
+   La navegación vive en <li>/<span> con onclick (no enfocables de fábrica).
+   Los volvemos operables con Tab + Enter/Espacio sin reescribir cada handler. */
+function marcarFocuseables(scope) {
+  (scope || document).querySelectorAll('[onclick]').forEach(el => {
+    const tag = el.tagName.toLowerCase();
+    if (tag === 'button' || tag === 'a' || tag === 'input') return; // ya accesibles
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    if (!el.hasAttribute('role'))     el.setAttribute('role', 'button');
+    if (el.classList.contains('back') && !el.hasAttribute('aria-label')) {
+      el.setAttribute('aria-label', 'Volver');
+    }
+  });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+  const el = e.target.closest && e.target.closest('[role="button"][onclick]');
+  if (!el) return;
+  e.preventDefault(); // evita el scroll del Espacio
+  el.click();
+});
+
+window.addEventListener('DOMContentLoaded', () => marcarFocuseables(document));
 </script>
 </body>
 </html>
