@@ -270,6 +270,13 @@
     background: #fff8e1; border: 1px solid #f4d570; border-radius: 8px;
     padding: 10px 12px; font-size: 12px; color: #7a5a00;
     margin-top: 10px; line-height: 1.4;
+    display: flex; align-items: flex-start; gap: 7px;
+  }
+  /* Sección de la ficha sin tarjeta contenedora (evita cards anidadas) */
+  .result-section { margin-bottom: 14px; }
+  .result-section .block-title {
+    padding-bottom: 8px; margin-bottom: 12px;
+    border-bottom: 1px solid #e7edf2;
   }
   .alert-empty {
     background: #f0f4f8; border: 1px dashed #b5c4d3; border-radius: 10px;
@@ -631,7 +638,7 @@
     <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
     <div class="app-header"><h2>Listo</h2></div>
     <div class="success-screen" style="flex:1;">
-      <div class="success-icon">✅</div>
+      <div class="success-icon"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#0d7a5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
       <div class="success-title">¡Ya estás anotado!</div>
       <div class="success-text">Tu perfil ya aparece en las zonas que elegiste.<br>Los colegas podrán contactarte directo por WhatsApp.</div>
       <button class="btn-primary" onclick="show('screen0')">Volver al inicio</button>
@@ -645,11 +652,12 @@
   <!-- Modal reportar error — global, funciona desde cualquier pantalla -->
   <div id="modalContacto" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:300; align-items:center; justify-content:center;">
     <div style="background:#fff; border-radius:16px; padding:24px; margin:20px; max-width:320px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-      <div style="font-size:32px; margin-bottom:10px;">⚠️</div>
+      <div style="margin-bottom:10px;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
       <div id="modalTitulo" style="font-size:16px; font-weight:700; color:#1a4d6f; margin-bottom:4px;">Reportar error</div>
       <div style="font-size:12px; color:#777; margin-bottom:18px;">Contactá al desarrollador para corregir el dato</div>
-      <a id="modalWaLink" href="https://wa.me/543764256652" target="_blank" rel="noopener noreferrer" style="display:block; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
-        💬 Reportar por WhatsApp
+      <a id="modalWaLink" href="https://wa.me/543764256652" target="_blank" rel="noopener noreferrer" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Reportar por WhatsApp
       </a>
       <button onclick="cerrarContacto()" style="background:none; border:none; color:#888; font-size:13px; cursor:pointer; text-decoration:underline;">Cerrar</button>
     </div>
@@ -1023,6 +1031,20 @@ function show(id, circ) {
   }
 }
 
+/* ── Iconos SVG (mismo trazo que la bienvenida; reemplazan emojis para coherencia) ── */
+const ICO = {
+  edificio: '<path d="M3 21h18M6 21V10l6-3.5L18 10v11M10 21v-5h4v5"/>',
+  personas: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  tel: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>',
+  alerta: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  whatsapp: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>'
+};
+function ico(name, size) {
+  size = size || 16;
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;vertical-align:-2px;">${ICO[name] || ''}</svg>`;
+}
+
 async function showResultadoData(nombre, circ) {
   const d = DATA.find(r => r.nombre === nombre && (!circ || r.circ === circ))
          || DATA.find(r => r.nombre === nombre);
@@ -1034,38 +1056,38 @@ async function showResultadoData(nombre, circ) {
   // Sanear tel y mail antes de meterlos en href para prevenir javascript:/data: URIs
   const telSafe  = d.tel.replace(/[^0-9+()\s-]/g,'');
   const mailSafe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.mail) ? d.mail : '';
-  const telHtml  = d.tel  !== '—' && telSafe  ? `<a href="tel:${esc(telSafe)}">📞 ${esc(d.tel)}</a>`      : `<span class="value">— no publicado</span>`;
-  const mailHtml = d.mail !== '—' && mailSafe ? `<a href="mailto:${esc(mailSafe)}">✉️ ${esc(d.mail)}</a>` : `<span class="value">— no publicado</span>`;
+  const telHtml  = d.tel  !== '—' && telSafe  ? `<a href="tel:${esc(telSafe)}">${ico('tel',14)} ${esc(d.tel)}</a>`      : `<span class="value">— no publicado</span>`;
+  const mailHtml = d.mail !== '—' && mailSafe ? `<a href="mailto:${esc(mailSafe)}">${ico('mail',14)} ${esc(d.mail)}</a>` : `<span class="value">— no publicado</span>`;
   const sinDatos = d.dir === '—' && d.tel === '—' && d.mail === '—';
 
   const bloqueInfo = sinDatos
     ? `<div class="block">
-        <div class="block-title"><span>🏛️</span> ¿Dónde se diligencia?</div>
-        <div style="text-align:center; padding:20px 10px;">
-          <div style="font-size:32px; margin-bottom:10px;">🕐</div>
+        <div class="block-title">${ico('edificio')} ¿Dónde se diligencia?</div>
+        <div style="text-align:center; padding:20px 10px; color:#94a3b8;">
+          <div style="margin-bottom:10px;">${ico('alerta',30)}</div>
           <div style="font-weight:700; color:#1a4d6f; margin-bottom:6px;">Información pendiente de actualizar</div>
           <div style="font-size:13px; color:#777; line-height:1.5;">Todavía no tenemos los datos de contacto de este juzgado. Si los conocés, usá el botón de abajo para reportarlos.</div>
         </div>
       </div>`
     : `<div class="block">
-        <div class="block-title"><span>🏛️</span> ¿Dónde se diligencia?</div>
+        <div class="block-title">${ico('edificio')} ¿Dónde se diligencia?</div>
         <div class="info-row"><span class="label">Tipo</span><span class="value">${esc(d.tipo)}</span></div>
         <div class="info-row"><span class="label">Dirección</span><span class="value">${esc(d.dir)}</span></div>
         <div class="info-row"><span class="label">Teléfono</span>${telHtml}</div>
         <div class="info-row"><span class="label">Mail</span>${mailHtml}</div>
         <div class="info-row"><span class="label">Horario</span><span class="value">${esc(d.horario)}</span></div>
-        <div class="alert-yellow">⚠️ Esta app no gestiona turnos — contactá directo por tel. o mail.</div>
+        <div class="alert-yellow">${ico('alerta',14)}<span>Esta app no gestiona turnos: contactá directo por teléfono o mail.</span></div>
       </div>`;
 
   document.getElementById('resultBody').innerHTML = `
     <div class="title">${esc(d.nombre)}</div>
     <div class="subtitle">${esc(info.titulo)}</div>
     ${bloqueInfo}
-    <div class="block" id="blockDil">
-      <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
-      <div style="text-align:center;padding:14px;color:#999;font-size:13px;">Cargando...</div>
-    </div>
-    <button class="btn-contacto" style="margin-top:4px;" onclick="mostrarContactoError('${esc(d.nombre)}')">⚠️ Reportar error en esta ficha</button>`;
+    <section class="result-section" id="blockDil">
+      <div class="block-title">${ico('personas')} Diligencieros para esta zona</div>
+      <div style="text-align:center;padding:14px;color:#94a3b8;font-size:13px;">Cargando...</div>
+    </section>
+    <button class="btn-contacto" style="margin-top:4px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="mostrarContactoError('${esc(d.nombre)}')">${ico('alerta',14)} Reportar error en esta ficha</button>`;
 
   // Guardar de qué pantalla viene para que el botón "‹" vuelva al lugar correcto
   pantAnteriorAResultado = (pantActual === 'screen2' || pantActual === 'screen3') ? pantActual : 'screen3';
@@ -1077,7 +1099,7 @@ async function showResultadoData(nombre, circ) {
 
   if (!resp.ok) {
     blockDil.innerHTML = `
-      <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
+      <div class="block-title">${ico('personas')} Diligencieros para esta zona</div>
       <div class="alert-empty" style="background:#fff4e6; border-color:#f4b870; color:#7a4a00;">
         <strong>No pudimos cargar la lista</strong>
         Revisá tu conexión y volvé a intentar.
@@ -1102,7 +1124,7 @@ async function showResultadoData(nombre, circ) {
   );
   if (!matches.length) {
     blockDil.innerHTML = `
-      <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
+      <div class="block-title">${ico('personas')} Diligencieros para esta zona</div>
       <div class="alert-empty">
         <strong>Todavía no hay diligencieros anotados</strong>
         ¿Sos colega de la zona? Anotate y aparecé acá.
@@ -1114,8 +1136,8 @@ async function showResultadoData(nombre, circ) {
       const telValido = telNum.length >= 6 && telNum.length <= 15;
       const acciones = telValido
         ? `<div class="colega-actions">
-            <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-            <a class="btn-small btn-call" href="tel:+54${telNum}">📞 Llamar</a>
+            <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank" rel="noopener noreferrer">${ico('whatsapp',15)} WhatsApp</a>
+            <a class="btn-small btn-call" href="tel:+54${telNum}">${ico('tel',15)} Llamar</a>
           </div>`
         : `<div style="font-size:11px; color:#999; text-align:center; margin-top:6px;">Tel. no publicado</div>`;
       return `<div class="colega-card">
@@ -1125,7 +1147,7 @@ async function showResultadoData(nombre, circ) {
       </div>`;
     }).join('');
     blockDil.innerHTML = `
-      <div class="block-title"><span>👥</span> Diligencieros para esta zona</div>
+      <div class="block-title">${ico('personas')} Diligencieros para esta zona</div>
       ${cards}
       <button class="btn-secondary" onclick="show('screen5')" style="margin-top:8px;">+ Anotarme también</button>`;
   }
