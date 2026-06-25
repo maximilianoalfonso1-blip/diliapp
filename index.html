@@ -11,10 +11,10 @@
 <meta name="application-name" content="DiliApp">
 <meta name="apple-mobile-web-app-title" content="DiliApp">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="description" content="DiliApp: encontrá al instante dónde diligenciar una cédula judicial en cualquier municipio de Misiones, y contactá colegas diligencieros de la zona.">
+<meta name="description" content="DiliApp: encontrá al instante dónde diligenciar una cédula judicial en cualquier municipio de Misiones, y contactá colegas diligenciadores de la zona.">
 <meta name="theme-color" content="#1a4d6f">
 <meta property="og:title" content="DiliApp">
-<meta property="og:description" content="Dónde diligenciar cédulas judiciales en Misiones y red de diligencieros por zona.">
+<meta property="og:description" content="Dónde diligenciar cédulas judiciales en Misiones y red de diligenciadores por zona.">
 <meta property="og:type" content="website">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
@@ -331,7 +331,7 @@
   .checkbox-item:hover { background: #eef4f9; }
   .checkbox-item input { margin: 0; }
   .terms { background: #f7f9fb; padding: 10px; border-radius: 8px; font-size: 11px; color: #555; line-height: 1.5; margin-top: 12px; }
-  .info-banner { background: #e3f2fd; border-left: 4px solid #1a4d6f; padding: 10px 12px; border-radius: 6px; font-size: 12px; color: #1a4d6f; margin-bottom: 14px; line-height: 1.4; }
+  .info-banner { background: #e3f2fd; border: 1px solid #b6d4ea; padding: 10px 12px; border-radius: 8px; font-size: 12px; color: #1a4d6f; margin-bottom: 14px; line-height: 1.4; }
 
   /* ── ÉXITO ── */
   .success-screen { text-align: center; padding: 28px 24px 20px; }
@@ -428,7 +428,7 @@
             </svg>
           </div>
           <div class="feature-text">
-            <strong>Red de diligencieros</strong>
+            <strong>Red de diligenciadores</strong>
             Colegas disponibles en cada zona para cuando no podés ir vos
           </div>
         </div>
@@ -1125,7 +1125,7 @@ async function showResultadoData(nombre, circ) {
     <div class="subtitle">${esc(info.titulo)}</div>
     ${bloqueInfo}
     <section class="result-section" id="blockDil">
-      <div class="block-title">${ico('personas')} Diligencieros para esta zona</div>
+      <div class="block-title">${ico('personas')} Diligenciadores para esta zona</div>
       <div style="text-align:center;padding:14px;color:#94a3b8;font-size:13px;">Cargando...</div>
     </section>
     <button class="btn-contacto" style="margin-top:4px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="mostrarContactoError('${esc(d.nombre)}')">${ico('alerta',14)} Reportar error en esta ficha</button>`;
@@ -1140,7 +1140,7 @@ async function showResultadoData(nombre, circ) {
 
   if (!resp.ok) {
     blockDil.innerHTML = `
-      <div class="block-title">${ico('personas')} Diligencieros para esta zona</div>
+      <div class="block-title">${ico('personas')} Diligenciadores para esta zona</div>
       <div class="alert-empty" style="background:#fff4e6; border-color:#f4b870; color:#7a4a00;">
         <strong>No pudimos cargar la lista</strong>
         Revisá tu conexión y volvé a intentar.
@@ -1165,9 +1165,9 @@ async function showResultadoData(nombre, circ) {
   );
   if (!matches.length) {
     blockDil.innerHTML = `
-      <div class="block-title">${ico('personas')} Diligencieros para esta zona</div>
+      <div class="block-title">${ico('personas')} Diligenciadores para esta zona</div>
       <div class="alert-empty">
-        <strong>Todavía no hay diligencieros anotados</strong>
+        <strong>Todavía no hay diligenciadores anotados</strong>
         ¿Sos colega de la zona? Anotate y aparecé acá.
         <button class="btn-primary" onclick="show('screen5')">+ Anotate como diligenciador</button>
       </div>`;
@@ -1188,7 +1188,7 @@ async function showResultadoData(nombre, circ) {
       </div>`;
     }).join('');
     blockDil.innerHTML = `
-      <div class="block-title">${ico('personas')} Diligencieros para esta zona</div>
+      <div class="block-title">${ico('personas')} Diligenciadores para esta zona</div>
       ${cards}
       <button class="btn-secondary" onclick="show('screen5')" style="margin-top:8px;">+ Anotarme también</button>`;
   }
