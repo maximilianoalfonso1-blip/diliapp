@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://script.google.com https://script.googleusercontent.com https://docs.google.com; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://script.google.com https://script.googleusercontent.com https://docs.google.com; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests;">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), midi=(), interest-cohort=()">
@@ -12,14 +12,17 @@
 <meta name="apple-mobile-web-app-title" content="DiliApp">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="description" content="DiliApp: encontrá al instante dónde diligenciar una cédula judicial en cualquier municipio de Misiones, y contactá colegas diligenciadores de la zona.">
-<meta name="theme-color" content="#1a4d6f">
+<meta name="theme-color" content="#1F1633">
 <meta property="og:title" content="DiliApp">
 <meta property="og:description" content="Dónde diligenciar cédulas judiciales en Misiones y red de diligenciadores por zona.">
 <meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     background: #eef2f6;
     min-height: 100vh;
     display: flex;
@@ -329,7 +332,7 @@
   .checkbox-list { max-height: 160px; overflow-y: auto; border: 1.5px solid #ddd; border-radius: 8px; padding: 8px; background: #fafbfc; }
   .checkbox-item { padding: 7px 6px; display: flex; align-items: center; gap: 8px; border-radius: 6px; cursor: pointer; font-size: 13px; }
   .checkbox-item:hover { background: #eef4f9; }
-  .checkbox-item input { margin: 0; }
+  .checkbox-item input { margin: 0; width: auto; flex-shrink: 0; }
   .terms { background: #f7f9fb; padding: 10px; border-radius: 8px; font-size: 11px; color: #555; line-height: 1.5; margin-top: 12px; }
   .info-banner { background: #e3f2fd; border: 1px solid #b6d4ea; padding: 10px 12px; border-radius: 8px; font-size: 12px; color: #1a4d6f; margin-bottom: 14px; line-height: 1.4; }
 
@@ -356,6 +359,91 @@
     border-radius: 8px;
   }
   .item:focus-visible { background: #eef4f9; }
+
+  /* ══ TEMA FORLEX NOCHE ══ (paleta de forlex.ar: violeta noche, rosa y lima; letra Rubik) */
+  body { background: #170f2a; color: #f7f6ff; }
+  .phone { background: #1F1633; box-shadow: 0 0 0 1px rgba(253,68,176,0.10), 0 18px 50px rgba(0,0,0,0.45); }
+  .app-header { background: #160f2b; border-bottom: 1px solid rgba(253,68,176,0.25); }
+  .welcome-body { background: #1F1633; }
+  .welcome-logo { background: #160f2b; border: 1.5px solid rgba(253,68,176,0.55); box-shadow: 0 10px 34px rgba(253,68,176,0.28); }
+  .welcome-logo img { display: block; }
+  .welcome-appname { color: #f7f6ff; }
+  .welcome-tagline { color: #FD44B0; }
+  .welcome-desc { color: rgba(247,246,255,0.70); }
+  .welcome-desc strong { color: #C2EF4E !important; }
+  .forlex-sello { display: inline-block; margin: 0 auto 12px; padding: 4px 14px; border-radius: 999px; font-size: 12.5px; color: #f7f6ff; background: #170f2a; border: 1px solid #FD44B0; }
+  .forlex-info { width: 100%; padding: 13px 15px; border-radius: 12px; font-size: 13px; line-height: 1.5; color: #f7f6ff; background: #170f2a; border: 1px solid transparent;
+    background-image: linear-gradient(#170f2a,#170f2a), linear-gradient(90deg,#FD44B0,#C2EF4E); background-origin: border-box; background-clip: padding-box, border-box; }
+  .feature-item { background: #170f2a; border-color: rgba(253,68,176,0.30); }
+  .feature-item:hover { box-shadow: 0 4px 14px rgba(253,68,176,0.18); }
+  .fi-pin { background: linear-gradient(135deg,#6C5FC7,#FD44B0); }
+  .feature-text { color: rgba(247,246,255,0.78); }
+  .feature-text strong { color: #C2EF4E; }
+  .btn-empezar { background: linear-gradient(90deg,#FD44B0,#C2EF4E); color: #1F1633; }
+  .btn-empezar:hover { background: linear-gradient(90deg,#ff5cbb,#cff66a); }
+  .btn-contacto { color: rgba(247,246,255,0.62); border-color: rgba(247,246,255,0.18); }
+  .btn-contacto:hover { color: #ff8fcf; border-color: #ff8fcf; }
+  .welcome-credit { color: rgba(247,246,255,0.50); }
+  .welcome-credit strong { color: #f7f6ff; }
+
+  .title { color: #f7f6ff; }
+  .subtitle { color: rgba(247,246,255,0.62); }
+  .item { background: #170f2a; border-color: rgba(247,246,255,0.12); }
+  .item:hover, .item:focus-visible { background: #2a1f47; border-color: #FD44B0; }
+  .item:active:not(.disabled) { background: #2a1f47 !important; }
+  .item-name { color: #f7f6ff; }
+  .item-sub { color: rgba(247,246,255,0.62); }
+  .item-arrow { color: #FD44B0; }
+  .badge, .badge-active { background: #d6268a; }
+  .badge-soon { background: rgba(247,246,255,0.12); color: rgba(247,246,255,0.75); }
+  .search-box { background: #170f2a; color: #f7f6ff; border-color: rgba(247,246,255,0.18); font-family: inherit; }
+  .search-box::placeholder, .form-group input::placeholder, #zonaSearch::placeholder { color: rgba(247,246,255,0.42); }
+  .search-box:focus { border-color: #FD44B0; }
+  .circ-card { border-color: rgba(247,246,255,0.12); }
+  .circ-card:hover { border-color: #FD44B0; box-shadow: 0 2px 14px rgba(253,68,176,0.18); }
+  .circ-header { background: #160f2b; border-bottom: 1px solid rgba(253,68,176,0.25); }
+  .circ-body { background: #170f2a; }
+  .circ-localidades { color: rgba(247,246,255,0.62); }
+
+  .block { background: #170f2a; border-color: rgba(247,246,255,0.12); }
+  .block-title { color: #C2EF4E; }
+  .result-section .block-title { border-bottom-color: rgba(247,246,255,0.12); }
+  .info-row { color: rgba(247,246,255,0.80); border-bottom-color: rgba(247,246,255,0.08); }
+  .info-row .label { color: rgba(247,246,255,0.55); }
+  .info-row .value { color: #f7f6ff; }
+  .info-row a { color: #ff8fcf; }
+  .alert-yellow { background: rgba(245,210,122,0.10); border-color: rgba(245,210,122,0.45); color: #f5d27a; }
+  .alert-empty { background: #170f2a; border-color: rgba(253,68,176,0.40); color: rgba(247,246,255,0.70); }
+  .alert-empty strong { color: #f7f6ff; }
+  .colega-card { background: #170f2a; border-color: rgba(247,246,255,0.12); }
+  .colega-name { color: #f7f6ff; }
+  .colega-data { color: rgba(247,246,255,0.62); }
+  .btn-call { background: #6C5FC7; }
+  .btn-primary { background: #d6268a; }
+  .btn-secondary { background: transparent; color: #ff8fcf; border-color: #ff8fcf; }
+
+  .form-group label { color: rgba(247,246,255,0.75); }
+  .form-group input:not([type=checkbox]), #zonaSearch { background: #170f2a !important; color: #f7f6ff; border-color: rgba(247,246,255,0.18) !important; }
+  .form-group input:focus { border-color: #FD44B0 !important; }
+  .form-group input.input-error, .checkbox-list.input-error { border-color: #ff6b6b !important; background: rgba(255,107,107,0.08) !important; }
+  .field-error { color: #ff8a8a; }
+  #formAviso { background: rgba(255,107,107,0.10); border-color: rgba(255,107,107,0.45); color: #ffb3b3; }
+  .checkbox-list { background: #170f2a; border-color: rgba(247,246,255,0.18); color: #f7f6ff; }
+  .checkbox-item:hover { background: #2a1f47; }
+  .checkbox-item input { accent-color: #d6268a; }
+  #fConsentimiento { accent-color: #d6268a; }
+  .terms { background: #170f2a; color: rgba(247,246,255,0.65); }
+  .terms strong { color: #f7f6ff; }
+  .terms a { color: #ff8fcf; }
+  .info-banner { background: rgba(108,95,199,0.18); border-color: rgba(108,95,199,0.55); color: #f7f6ff; }
+  .success-title { color: #f7f6ff; }
+  .success-text { color: rgba(247,246,255,0.70); }
+  .nav-btn { background: #170f2a; border-color: rgba(247,246,255,0.18); color: rgba(247,246,255,0.70); }
+  .item:focus-visible, .circ-card:focus-visible, .back:focus-visible,
+  .btn-empezar:focus-visible, .btn-primary:focus-visible, .btn-secondary:focus-visible,
+  .btn-contacto:focus-visible, .btn-small:focus-visible, .floating-btn:focus-visible,
+  .search-box:focus-visible, [role="button"]:focus-visible { outline-color: #C2EF4E; }
+  .modal-caja { background: #241a3d !important; color: #f7f6ff !important; border: 1px solid rgba(253,68,176,0.35); }
 </style>
 </head>
 <body>
@@ -374,35 +462,14 @@
     <div class="welcome-body">
 
       <div class="welcome-top">
-        <div class="welcome-logo">
-          <!-- Balanza de la Justicia — se balancea sola -->
-          <svg class="logo-svg" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Mástil -->
-            <line x1="30" y1="8" x2="30" y2="52" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- Base -->
-            <line x1="20" y1="52" x2="40" y2="52" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- Grupo del brazo que se balancea -->
-            <g class="logo-balanza">
-              <!-- Barra horizontal -->
-              <line x1="10" y1="18" x2="50" y2="18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-              <!-- Cadena izquierda -->
-              <line x1="14" y1="18" x2="14" y2="30" stroke="white" stroke-width="1.5" stroke-dasharray="2 2"/>
-              <!-- Cadena derecha -->
-              <line x1="46" y1="18" x2="46" y2="30" stroke="white" stroke-width="1.5" stroke-dasharray="2 2"/>
-              <!-- Platillo izquierdo -->
-              <path d="M8 30 Q14 36 20 30" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.15)" stroke-linecap="round"/>
-              <!-- Platillo derecho -->
-              <path d="M40 30 Q46 36 52 30" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.15)" stroke-linecap="round"/>
-            </g>
-            <!-- Círculo en el pivote -->
-            <circle cx="30" cy="8" r="3" fill="white"/>
-          </svg>
-        </div>
+        <div class="welcome-logo"><img src="forlex-f.png" alt="Forlex" width="58" height="58"></div>
         <div class="welcome-appname">DiliApp</div>
+        <div class="forlex-sello">una app de <b>Forlex</b></div>
         <div class="welcome-tagline">Todo lo que necesitás para diligenciar, en un solo lugar.</div>
-        <div class="welcome-desc">Encontrá al instante dónde presentar una <strong style="color:#1a4d6f;">cédula judicial</strong> en cualquier municipio de Argentina.</div>
+        <div class="welcome-desc">Encontrá al instante dónde presentar una <strong style="color:#ff8fcf;">cédula judicial</strong> en cualquier municipio de Misiones.</div>
       </div>
 
+      <div class="forlex-info">La guía de <b>Forlex</b> con <b>todos los lugares para diligenciar cédulas en Misiones</b>: juzgados de paz, oficinas de mandamientos y colegas diligenciadores por zona.</div>
       <div class="welcome-features">
         <!-- Feature 1: Pin de ubicación -->
         <div class="feature-item">
@@ -449,7 +516,7 @@
       <div class="welcome-bottom">
         <button class="btn-empezar" onclick="show('screen1')">Empezar →</button>
         <div class="welcome-credit">
-          Desarrollada por <strong>Alfonso Maximiliano</strong> · Abogado, Misiones
+          Desarrollada por <strong>Forlex</strong> · Misiones
         </div>
       </div>
 
@@ -507,7 +574,7 @@
 
       <!-- Las 5 circunscripciones -->
       <div id="circBlock">
-        <div style="font-size:12px; color:#888; margin-bottom:10px;">O elegí por circunscripción:</div>
+        <div style="font-size:12px; color:rgba(247,246,255,.55); margin-bottom:10px;">O elegí por circunscripción:</div>
 
         <div class="circ-card" onclick="show('screen3', '1ra')">
           <div class="circ-header">
@@ -629,7 +696,7 @@
       <div class="form-group">
         <label>Zonas que podés cubrir *</label>
         <input type="text" id="zonaSearch" placeholder="🔍 Buscar zona..." oninput="filtrarZonas(this.value)"
-          style="width:100%; padding:8px 10px; border:1.5px solid #ddd; border-radius:8px; font-size:13px; margin-bottom:6px; outline:none; font-family:inherit;">
+          style="width:100%; padding:8px 10px; border:1.5px solid rgba(247,246,255,.18); border-radius:8px; font-size:13px; margin-bottom:6px; outline:none; font-family:inherit;">
         <div class="checkbox-list" id="zonasList"></div>
         <div class="field-error" id="errZonas"></div>
       </div>
@@ -643,7 +710,7 @@
         <strong>Derechos ARCO:</strong> podés solicitar en cualquier momento el <strong>acceso, rectificación, cancelación u oposición</strong> al tratamiento de tus datos. Para hacerlo, tocá <a href="#" onclick="pedirBaja(); return false;"><strong>“Dar de baja o corregir mis datos”</strong></a> y mandá el mensaje por WhatsApp al desarrollador. La baja se gestiona dentro de las 48 hs hábiles.<br><br>
         Responsable del tratamiento: Dr. Maximiliano D. Alfonso, abogado (Misiones).
       </div>
-      <label style="display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-size:12px; color:#555; cursor:pointer;">
+      <label style="display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-size:12px; color:rgba(247,246,255,.70); cursor:pointer;">
         <input id="fConsentimiento" type="checkbox" style="margin-top:3px;" aria-describedby="errConsent">
         <span>Leí y acepto el tratamiento de mis datos conforme a la Ley 25.326.</span>
       </label>
@@ -659,12 +726,12 @@
     <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
     <div class="app-header"><h2>Listo</h2></div>
     <div class="success-screen" style="flex:1;">
-      <div class="success-icon"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#0d7a5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <div class="success-icon"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#C2EF4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
       <div class="success-title">¡Ya estás anotado!</div>
       <div class="success-text">Tu perfil ya aparece en las zonas que elegiste.<br>Los colegas podrán contactarte directo por WhatsApp.</div>
       <button class="btn-primary" onclick="show('screen0')">Volver al inicio</button>
       <button class="btn-secondary" onclick="show('screen4')">Ver cómo aparezco</button>
-      <div style="margin-top:20px; background:#f7f9fb; border:1px solid #e1e7ed; border-radius:10px; padding:13px 14px; font-size:12px; color:#666; line-height:1.5; text-align:left;">
+      <div style="margin-top:20px; background:#170f2a; border:1px solid rgba(247,246,255,.12); border-radius:10px; padding:13px 14px; font-size:12px; color:rgba(247,246,255,.62); line-height:1.5; text-align:left;">
         ℹ️ ¿Querés sacar tu número de la lista o corregir algún dato? Mandá el pedido por WhatsApp y el administrador lo gestiona.
         <button class="btn-secondary" onclick="pedirBaja()" style="margin-top:8px;">Dar de baja o corregir mis datos</button>
       </div>
@@ -673,9 +740,9 @@
 
   <!-- Modal confirmar datos antes de publicar -->
   <div id="modalConfirmar" role="dialog" aria-modal="true" aria-labelledby="confTitulo" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:310; align-items:center; justify-content:center;">
-    <div style="background:#fff; border-radius:16px; padding:22px; margin:16px; max-width:340px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); font-size:13px; color:#333;">
-      <div id="confTitulo" style="font-size:16px; font-weight:700; color:#1a4d6f; margin-bottom:4px; text-align:center;">Revisá tus datos antes de publicar</div>
-      <div style="font-size:12px; color:#777; margin-bottom:14px; text-align:center;">Así te van a ver y contactar los colegas.</div>
+    <div class="modal-caja" style="background:#fff; border-radius:16px; padding:22px; margin:16px; max-width:340px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); font-size:13px; color:#f7f6ff;">
+      <div id="confTitulo" style="font-size:16px; font-weight:700; color:#ff8fcf; margin-bottom:4px; text-align:center;">Revisá tus datos antes de publicar</div>
+      <div style="font-size:12px; color:rgba(247,246,255,.62); margin-bottom:14px; text-align:center;">Así te van a ver y contactar los colegas.</div>
       <div style="line-height:1.7;">
         <div><strong>Nombre:</strong> <span id="confNombre"></span></div>
         <div><strong>Matrícula:</strong> <span id="confMatricula"></span></div>
@@ -683,7 +750,7 @@
         <div><strong>WhatsApp / Teléfono:</strong> <span id="confTel"></span></div>
         <div><strong>Zonas:</strong> <span id="confZonas"></span></div>
       </div>
-      <div style="background:#fff8e6; border:1px solid #f5d27a; border-radius:10px; padding:10px 12px; margin:14px 0; font-size:12px; line-height:1.5;">
+      <div style="background:rgba(245,210,122,.10); border:1px solid rgba(245,210,122,.45); color:#f5d27a; border-radius:10px; padding:10px 12px; margin:14px 0; font-size:12px; line-height:1.5;">
         Probá que el número sea el tuyo: tocá <strong>Probar WhatsApp</strong> y fijate que se abra tu chat. Si no es tu número, tocá <strong>Corregir</strong>.
       </div>
       <div style="display:flex; gap:8px; margin-bottom:14px;">
@@ -697,15 +764,15 @@
 
   <!-- Modal reportar error — global, funciona desde cualquier pantalla -->
   <div id="modalContacto" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:300; align-items:center; justify-content:center;">
-    <div style="background:#fff; border-radius:16px; padding:24px; margin:20px; max-width:320px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div class="modal-caja" style="background:#fff; border-radius:16px; padding:24px; margin:20px; max-width:320px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
       <div style="margin-bottom:10px;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-      <div id="modalTitulo" style="font-size:16px; font-weight:700; color:#1a4d6f; margin-bottom:4px;">Reportar error</div>
-      <div id="modalSub" style="font-size:12px; color:#777; margin-bottom:18px;">Contactá al desarrollador para corregir el dato</div>
+      <div id="modalTitulo" style="font-size:16px; font-weight:700; color:#ff8fcf; margin-bottom:4px;">Reportar error</div>
+      <div id="modalSub" style="font-size:12px; color:rgba(247,246,255,.62); margin-bottom:18px;">Contactá al desarrollador para corregir el dato</div>
       <a id="modalWaLink" href="https://wa.me/5493764256652" target="_blank" rel="noopener noreferrer" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         <span id="modalWaTxt">Reportar por WhatsApp</span>
       </a>
-      <button onclick="cerrarContacto()" style="background:none; border:none; color:#888; font-size:13px; cursor:pointer; text-decoration:underline;">Cerrar</button>
+      <button onclick="cerrarContacto()" style="background:none; border:none; color:rgba(247,246,255,.55); font-size:13px; cursor:pointer; text-decoration:underline;">Cerrar</button>
     </div>
   </div>
 
@@ -1191,10 +1258,10 @@ async function showResultadoData(nombre, circ) {
   const bloqueInfo = sinDatos
     ? `<div class="block">
         <div class="block-title">${ico('edificio')} ¿Dónde se diligencia?</div>
-        <div style="text-align:center; padding:20px 10px; color:#94a3b8;">
+        <div style="text-align:center; padding:20px 10px; color:rgba(247,246,255,.55);">
           <div style="margin-bottom:10px;">${ico('alerta',30)}</div>
-          <div style="font-weight:700; color:#1a4d6f; margin-bottom:6px;">Información pendiente de actualizar</div>
-          <div style="font-size:13px; color:#777; line-height:1.5;">Todavía no tenemos los datos de contacto de este juzgado. Si los conocés, usá el botón de abajo para reportarlos.</div>
+          <div style="font-weight:700; color:#ff8fcf; margin-bottom:6px;">Información pendiente de actualizar</div>
+          <div style="font-size:13px; color:rgba(247,246,255,.62); line-height:1.5;">Todavía no tenemos los datos de contacto de este juzgado. Si los conocés, usá el botón de abajo para reportarlos.</div>
         </div>
       </div>`
     : `<div class="block">
@@ -1213,7 +1280,7 @@ async function showResultadoData(nombre, circ) {
     ${bloqueInfo}
     <section class="result-section" id="blockDil">
       <div class="block-title">${ico('personas')} Diligenciadores para esta zona</div>
-      <div style="text-align:center;padding:14px;color:#94a3b8;font-size:13px;">Cargando...</div>
+      <div style="text-align:center;padding:14px;color:rgba(247,246,255,.55);font-size:13px;">Cargando...</div>
     </section>
     <button class="btn-contacto" style="margin-top:4px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="mostrarContactoError('${esc(d.nombre)}')">${ico('alerta',14)} Reportar error en esta ficha</button>`;
 
@@ -1228,7 +1295,7 @@ async function showResultadoData(nombre, circ) {
   if (!resp.ok) {
     blockDil.innerHTML = `
       <div class="block-title">${ico('personas')} Diligenciadores para esta zona</div>
-      <div class="alert-empty" style="background:#fff4e6; border-color:#f4b870; color:#7a4a00;">
+      <div class="alert-empty" style="background:rgba(245,184,112,.10); border-color:#f4b870; color:#f5c07a;">
         <strong>No pudimos cargar la lista</strong>
         Revisá tu conexión y volvé a intentar.
         <button class="btn-primary" onclick="DILIGENCIADORES_CACHE=null; showResultadoData('${esc(d.nombre)}','${esc(d.circ)}')" style="margin-top:10px;">Reintentar</button>
@@ -1266,7 +1333,7 @@ async function showResultadoData(nombre, circ) {
             <a class="btn-small btn-wpp" href="https://wa.me/549${telNum}" target="_blank" rel="noopener noreferrer">${ico('whatsapp',15)} WhatsApp</a>
             <a class="btn-small btn-call" href="tel:+549${telNum}">${ico('tel',15)} Llamar</a>
           </div>`
-        : `<div style="font-size:11px; color:#999; text-align:center; margin-top:6px;">Tel. no publicado</div>`;
+        : `<div style="font-size:11px; color:rgba(247,246,255,.55); text-align:center; margin-top:6px;">Tel. no publicado</div>`;
       return `<div class="colega-card">
         <div class="colega-name">${esc(dil.nombre)}</div>
         <div class="colega-data">Mat. ${esc(dil.matricula)}</div>
@@ -1277,7 +1344,7 @@ async function showResultadoData(nombre, circ) {
       <div class="block-title">${ico('personas')} Diligenciadores para esta zona</div>
       ${cards}
       <button class="btn-secondary" onclick="show('screen5')" style="margin-top:8px;">+ Anotarme también</button>
-      <div style="text-align:center; margin-top:8px;"><a href="#" onclick="pedirBaja(); return false;" style="font-size:12px; color:#888;">¿Figurás acá y querés darte de baja?</a></div>`;
+      <div style="text-align:center; margin-top:8px;"><a href="#" onclick="pedirBaja(); return false;" style="font-size:12px; color:rgba(247,246,255,.55);">¿Figurás acá y querés darte de baja?</a></div>`;
   }
 }
 
@@ -1320,7 +1387,7 @@ function buscarMunicipio(q) {
     r.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q)
   );
   if (!matches.length) {
-    searchRes.innerHTML = '<li style="padding:14px;color:#888;font-size:13px;">No encontramos esa localidad. Revisá la ortografía o elegí por circunscripción.</li>';
+    searchRes.innerHTML = '<li style="padding:14px;color:rgba(247,246,255,.55);font-size:13px;">No encontramos esa localidad. Revisá la ortografía o elegí por circunscripción.</li>';
   } else {
     searchRes.innerHTML = matches.map(r => {
       const info = CIRC_INFO[r.circ];
