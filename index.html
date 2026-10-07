@@ -379,8 +379,14 @@
   .fi-pin { background: linear-gradient(135deg,#6C5FC7,#FD44B0); }
   .feature-text { color: rgba(247,246,255,0.78); }
   .feature-text strong { color: #C2EF4E; }
-  .btn-empezar { background: linear-gradient(90deg,#FD44B0,#C2EF4E); color: #1F1633; }
-  .btn-empezar:hover { background: linear-gradient(90deg,#ff5cbb,#cff66a); }
+  .btn-empezar { background: #f7f6ff; color: #1F1633; box-shadow: 0 8px 24px rgba(0,0,0,0.30); }
+  .btn-empezar:hover { background: #ffffff; }
+  .btn-forlex { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%;
+    padding: 13px; margin-bottom: 12px; border-radius: 12px; text-decoration: none;
+    font-size: 14.5px; font-weight: 600; color: #f7f6ff; background: #160f2b; border: 1.5px solid #FD44B0; }
+  .btn-forlex:hover { background: #2a1f47; }
+  .btn-forlex img { width: 22px; height: 22px; }
+  .btn-forlex:focus-visible { outline: 3px solid #C2EF4E; outline-offset: 2px; }
   .btn-contacto { color: rgba(247,246,255,0.62); border-color: rgba(247,246,255,0.18); }
   .btn-contacto:hover { color: #ff8fcf; border-color: #ff8fcf; }
   .welcome-credit { color: rgba(247,246,255,0.50); }
@@ -515,6 +521,7 @@
 
       <div class="welcome-bottom">
         <button class="btn-empezar" onclick="show('screen1')">Empezar →</button>
+        <a class="btn-forlex" href="https://forlex.ar" target="_blank" rel="noopener"><img src="forlex-f.png" alt="">Conocé Forlex →</a>
         <div class="welcome-credit">
           Desarrollada por <strong>Forlex</strong> · Misiones
         </div>
