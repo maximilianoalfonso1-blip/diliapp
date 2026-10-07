@@ -676,7 +676,7 @@
       <div style="margin-bottom:10px;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
       <div id="modalTitulo" style="font-size:16px; font-weight:700; color:#1a4d6f; margin-bottom:4px;">Reportar error</div>
       <div style="font-size:12px; color:#777; margin-bottom:18px;">Contactá al desarrollador para corregir el dato</div>
-      <a id="modalWaLink" href="https://wa.me/543764256652" target="_blank" rel="noopener noreferrer" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
+      <a id="modalWaLink" href="https://wa.me/5493764256652" target="_blank" rel="noopener noreferrer" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25d366; color:white; padding:13px; border-radius:10px; text-decoration:none; font-weight:600; font-size:15px; margin-bottom:16px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         Reportar por WhatsApp
       </a>
@@ -754,6 +754,23 @@ async function cargarDiligenciadores() {
     DILIGENCIADORES_CACHE = { ok: false, lista: [] };
   }
   return DILIGENCIADORES_CACHE;
+}
+
+// Teléfono AR → número nacional de 10 dígitos (área sin 0 + número sin 15).
+// Acepta lo que escriba el colega: +54 9 376 4123456, 0376 15 4123456, 3764123456, etc.
+// Devuelve '' si no se puede llevar a 10 dígitos.
+function telNacionalAR(raw) {
+  let d = String(raw || '').replace(/\D/g,'');
+  if (d.startsWith('00')) d = d.slice(2);
+  if (d.startsWith('54') && d.length >= 12) d = d.slice(2);
+  if (d.startsWith('9') && d.length === 11) d = d.slice(1);
+  if (d.startsWith('0')) d = d.slice(1);
+  if (d.length === 12) {
+    for (const largoArea of [4, 3, 2]) {
+      if (d.substr(largoArea, 2) === '15') { d = d.slice(0, largoArea) + d.slice(largoArea + 2); break; }
+    }
+  }
+  return d.length === 10 ? d : '';
 }
 
 function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
@@ -852,7 +869,7 @@ async function validarFormulario() {
   else if (!/^\d{1,10}$/.test(matricula)) fallar('errMatricula', 'La matrícula debe ser numérica (solo dígitos).', 'fMatricula');
 
   if (!tel) fallar('errTel', 'Ingresá tu teléfono.', 'fTel');
-  else if (!/^[0-9+()\s-]{6,30}$/.test(tel) || !/\d{6,}/.test(tel.replace(/\D/g,''))) fallar('errTel', 'Al menos 6 dígitos. Solo 0-9, +, -, espacios y paréntesis.', 'fTel');
+  else if (!/^[0-9+()\s-]{6,30}$/.test(tel) || !telNacionalAR(tel)) fallar('errTel', 'Ingresá código de área y número, sin 0 ni 15. Ej: 3764123456.', 'fTel');
 
   if (!consent || !consent.checked) fallar('errConsent', 'Tenés que aceptar el tratamiento de datos (Ley 25.326) para continuar.', 'fConsentimiento');
 
@@ -875,7 +892,7 @@ async function validarFormulario() {
   const params = new URLSearchParams({
     nombre:    sanearFormula(nombre),
     matricula: sanearFormula(matricula),
-    tel:       sanearFormula(tel),
+    tel:       telNacionalAR(tel),
     zonas:     sanearFormula(zonas),
     localidad: sanearFormula(document.getElementById('fLocalidad').value.trim())
   });
@@ -915,10 +932,10 @@ function mostrarContactoError(municipio) {
     // textContent ya escapa cualquier HTML; el href se construye con encodeURIComponent
     titulo.textContent = 'Reportar error en ' + municipio;
     const msg = encodeURIComponent('Hola, encontré un error en DiliApp.\n\nMunicipio: ' + municipio + '\nError: ');
-    waLink.href = 'https://wa.me/543764256652?text=' + msg;
+    waLink.href = 'https://wa.me/5493764256652?text=' + msg;
   } else {
     titulo.textContent = 'Reportar error';
-    waLink.href = 'https://wa.me/543764256652';
+    waLink.href = 'https://wa.me/5493764256652';
   }
   document.getElementById('modalContacto').style.display = 'flex';
 }
@@ -1173,12 +1190,11 @@ async function showResultadoData(nombre, circ) {
       </div>`;
   } else {
     const cards = matches.map(dil => {
-      const telNum = dil.tel.replace(/\D/g,'');
-      const telValido = telNum.length >= 6 && telNum.length <= 15;
-      const acciones = telValido
+      const telNum = telNacionalAR(dil.tel);
+      const acciones = telNum
         ? `<div class="colega-actions">
-            <a class="btn-small btn-wpp" href="https://wa.me/54${telNum}" target="_blank" rel="noopener noreferrer">${ico('whatsapp',15)} WhatsApp</a>
-            <a class="btn-small btn-call" href="tel:+54${telNum}">${ico('tel',15)} Llamar</a>
+            <a class="btn-small btn-wpp" href="https://wa.me/549${telNum}" target="_blank" rel="noopener noreferrer">${ico('whatsapp',15)} WhatsApp</a>
+            <a class="btn-small btn-call" href="tel:+549${telNum}">${ico('tel',15)} Llamar</a>
           </div>`
         : `<div style="font-size:11px; color:#999; text-align:center; margin-top:6px;">Tel. no publicado</div>`;
       return `<div class="colega-card">
