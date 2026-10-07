@@ -723,7 +723,12 @@ let DILIGENCIADORES_CACHE = null;
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/1_rp7MvHx7-iftbfsAVWTHSSGSjFip-fa018SvQfGLMA/gviz/tq?tqx=out:csv&sheet=Diligenciadores';
 
 function parsearCSV(text) {
-  return text.trim().split('\n').slice(1).filter(l => l.trim()).map(line => {
+  const lineas = text.trim().split('\n');
+  // Columnas por nombre de encabezado (la planilla tiene DNI entre Matricula y Localidad)
+  const enc = (lineas[0] || '').split(',').map(h => norm(h.replace(/"/g,'').trim()));
+  const col = (nombre, porDefecto) => { const i = enc.indexOf(nombre); return i >= 0 ? i : porDefecto; };
+  const iNom = col('nombre', 0), iMat = col('matricula', 1), iTel = col('telefono', 4), iZon = col('zonas', 5);
+  return lineas.slice(1).filter(l => l.trim()).map(line => {
     const cols = [];
     let cur = '', inQ = false;
     for (const ch of line) {
@@ -732,12 +737,11 @@ function parsearCSV(text) {
       else { cur += ch; }
     }
     cols.push(cur);
-    // Orden actual: Nombre(0), Matricula(1), Localidad(2), Telefono(3), Zonas(4), Fecha(5)
     return {
-      nombre:    cols[0] || '',
-      matricula: cols[1] || '',
-      tel:       cols[3] || '',
-      zonas:     (cols[4] || '').split(',').map(z => z.trim()).filter(Boolean)
+      nombre:    cols[iNom] || '',
+      matricula: cols[iMat] || '',
+      tel:       cols[iTel] || '',
+      zonas:     (cols[iZon] || '').split(',').map(z => z.trim()).filter(Boolean)
     };
   });
 }
@@ -787,7 +791,7 @@ async function cargarDiligenciadores() {
 function telNacionalAR(raw) {
   let d = String(raw || '').replace(/\D/g,'');
   if (d.startsWith('00')) d = d.slice(2);
-  if (d.startsWith('54') && d.length >= 12) d = d.slice(2);
+  while (d.startsWith('54') && d.length >= 12) d = d.slice(2); // +54 repetido (+54 54 ...)
   if (d.startsWith('9') && d.length === 11) d = d.slice(1);
   if (d.startsWith('0')) d = d.slice(1);
   if (d.length === 12) {
