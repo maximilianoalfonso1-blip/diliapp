@@ -457,9 +457,9 @@
   .phone { min-height: 100dvh; }
   #screen0 { min-height: 100dvh; }
   .welcome-body { padding: 20px 18px max(16px, env(safe-area-inset-bottom)); gap: 18px; justify-content: center; }
-  .welcome-logo { width: 62px; height: 62px; border-radius: 18px; margin-bottom: 12px; }
+  .welcome-logo { width: 88px; height: 88px; border-radius: 24px; margin-bottom: 14px; }
   .welcome-logo img { width: 64%; height: 64%; }
-  .welcome-appname { font-size: 38px; margin-bottom: 8px; }
+  .welcome-appname { font-size: 48px; margin-bottom: 10px; }
   .forlex-sello { margin-bottom: 12px; padding: 4px 14px; font-size: 14px; }
   .welcome-tagline { font-size: 19px; line-height: 1.35; margin-bottom: 6px; }
   .welcome-desc { font-size: 15.5px; line-height: 1.45; }
@@ -473,8 +473,8 @@
   .btn-forlex { padding: 12px; margin-bottom: 10px; font-size: 16px; }
   @media (max-height: 780px) {
     .welcome-body { padding-top: 12px; gap: 12px; }
-    .welcome-logo { width: 52px; height: 52px; margin-bottom: 8px; }
-    .welcome-appname { font-size: 32px; margin-bottom: 6px; }
+    .welcome-logo { width: 76px; height: 76px; border-radius: 21px; margin-bottom: 10px; }
+    .welcome-appname { font-size: 44px; margin-bottom: 8px; }
     .forlex-sello { margin-bottom: 8px; font-size: 13px; }
     .welcome-tagline { font-size: 17px; }
     .welcome-desc { font-size: 14.5px; }
@@ -485,6 +485,11 @@
     .feature-text strong { font-size: 15px; }
     .btn-empezar { padding: 13px; font-size: 17px; }
     .btn-forlex { padding: 10px; font-size: 15px; }
+  }
+  @media (max-height: 670px) {
+    .welcome-logo { width: 56px; height: 56px; border-radius: 16px; margin-bottom: 8px; }
+    .welcome-appname { font-size: 34px; margin-bottom: 6px; }
+    .welcome-body { gap: 10px; }
   }
 </style>
 </head>
