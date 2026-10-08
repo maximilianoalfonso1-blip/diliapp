@@ -451,22 +451,26 @@
   .search-box:focus-visible, [role="button"]:focus-visible { outline-color: #C2EF4E; }
   .modal-caja { background: #241a3d !important; color: #f7f6ff !important; border: 1px solid rgba(253,68,176,0.35); }
 
-  /* ══ INICIO COMPACTO ══ todo entra en una pantalla de celular sin bajar */
-  .welcome-body { padding: 18px 20px 14px; gap: 14px; }
-  .welcome-logo { width: 58px; height: 58px; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 6px 22px rgba(253,68,176,0.25); }
-  .welcome-logo img { width: 38px; height: 38px; }
-  .welcome-appname { font-size: 30px; margin-bottom: 6px; }
-  .forlex-sello { margin-bottom: 8px; padding: 3px 12px; font-size: 12px; }
-  .welcome-tagline { font-size: 15px; line-height: 1.35; margin-bottom: 4px; }
-  .welcome-desc { font-size: 13px; line-height: 1.4; }
-  .welcome-features { margin: 0; gap: 8px; }
-  .feature-item { padding: 9px 12px; gap: 12px; border-radius: 10px; }
-  .feature-icon-wrap { width: 34px; height: 34px; border-radius: 10px; }
-  .feature-icon-wrap svg { width: 18px; height: 18px; }
-  .feature-text { font-size: 12px; line-height: 1.35; }
-  .feature-text strong { font-size: 13px; }
-  .btn-empezar { padding: 13px; margin-bottom: 8px; }
-  .btn-forlex { padding: 10px; margin-bottom: 8px; font-size: 14px; }
+  button, input, select, textarea { font-family: inherit; }
+  /* ══ INICIO ADAPTABLE ══ ocupa justo la pantalla del celular: se agranda si sobra lugar
+     y se achica si falta (unidades de alto de pantalla con mínimo y máximo) */
+  .phone { min-height: 100dvh; }
+  #screen0 { min-height: 100dvh; }
+  .welcome-body { padding: clamp(14px, 3dvh, 32px) 22px max(16px, env(safe-area-inset-bottom)); gap: clamp(12px, 2dvh, 24px); justify-content: space-between; }
+  .welcome-logo { width: clamp(54px, 8.5dvh, 84px); height: clamp(54px, 8.5dvh, 84px); border-radius: clamp(16px, 2.6dvh, 24px); margin-bottom: clamp(8px, 1.5dvh, 16px); }
+  .welcome-logo img { width: 64%; height: 64%; }
+  .welcome-appname { font-size: clamp(28px, 4.6dvh, 42px); margin-bottom: clamp(4px, 0.9dvh, 10px); }
+  .forlex-sello { margin-bottom: clamp(8px, 1.4dvh, 16px); padding: 4px 14px; font-size: clamp(12px, 1.7dvh, 14px); }
+  .welcome-tagline { font-size: clamp(15px, 2.2dvh, 19px); line-height: 1.35; margin-bottom: clamp(4px, 1dvh, 8px); }
+  .welcome-desc { font-size: clamp(13px, 1.9dvh, 15px); line-height: 1.45; }
+  .welcome-features { margin: 0; gap: clamp(7px, 1.1dvh, 12px); }
+  .feature-item { padding: clamp(8px, 1.4dvh, 16px) 14px; gap: 14px; border-radius: 12px; }
+  .feature-icon-wrap { width: clamp(34px, 5.4dvh, 44px); height: clamp(34px, 5.4dvh, 44px); border-radius: 12px; }
+  .feature-icon-wrap svg { width: 50%; height: 50%; }
+  .feature-text { font-size: clamp(12px, 1.75dvh, 13.5px); line-height: 1.4; }
+  .feature-text strong { font-size: clamp(13px, 1.95dvh, 15px); }
+  .btn-empezar { padding: clamp(12px, 1.8dvh, 17px); margin-bottom: 10px; font-size: clamp(16px, 2.2dvh, 18px); }
+  .btn-forlex { padding: clamp(9px, 1.4dvh, 14px); margin-bottom: 10px; }
 </style>
 </head>
 <body>
