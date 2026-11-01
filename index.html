@@ -836,6 +836,18 @@ let DILIGENCIADORES_CACHE = null;
 
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/1_rp7MvHx7-iftbfsAVWTHSSGSjFip-fa018SvQfGLMA/gviz/tq?tqx=out:csv&sheet=Diligenciadores';
 
+// Contador de aperturas (proyecto Apps Script "DiliApp Visitas", ver apps-script/visitas.gs).
+// Cuenta una apertura por pestaña: recargar la página no suma de nuevo.
+const VISITAS_URL = 'https://script.google.com/macros/s/AKfycbxKP5f4h-fzNrcjl5gZdwDJQh3zpJxtSglmSy4kNRSTyinObpq2j1IwJuTa4g_swM1l/exec';
+
+function contarApertura() {
+  try {
+    if (sessionStorage.getItem('diliapp_contada')) return;
+    sessionStorage.setItem('diliapp_contada', '1');
+  } catch (e) { /* sin sessionStorage: se cuenta igual */ }
+  fetch(VISITAS_URL, { method: 'POST', mode: 'no-cors', keepalive: true }).catch(() => {});
+}
+
 function parsearCSV(text) {
   const lineas = text.trim().split('\n');
   // Columnas por nombre de encabezado (la planilla tiene DNI entre Matricula y Localidad)
@@ -1475,6 +1487,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('DOMContentLoaded', () => {
+  contarApertura();
   marcarFocuseables(document);
   // Al corregir un campo, limpiar su error inline
   const limpiar = (inputId, errId) => {
