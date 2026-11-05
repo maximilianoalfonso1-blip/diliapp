@@ -560,7 +560,7 @@
       </div>
 
       <div class="welcome-bottom">
-        <button class="btn-empezar" onclick="show('screen1')">Empezar →</button>
+        <button class="btn-empezar" onclick="show('screen2')">Empezar →</button>
         <a class="btn-forlex" href="https://forlex.ar" target="_blank" rel="noopener"><img src="forlex-f.png" alt="">Conocé Forlex →</a>
         <div class="welcome-credit">
           Desarrollada por <strong>Forlex</strong> · Misiones
@@ -571,43 +571,12 @@
   </div>
 
   <!-- ══════════════════════════════════════════
-       PANTALLA 1: ELEGIR PROVINCIA
-  ══════════════════════════════════════════ -->
-  <div class="screen" id="screen1">
-    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
-    <div class="app-header">
-      <span class="back" onclick="show('screen0')">‹</span>
-      <h2>DiliApp</h2>
-    </div>
-    <div class="screen-body" style="flex:1; overflow-y:auto;">
-      <div class="title">¿En qué provincia?</div>
-      <div class="subtitle">Elegí la provincia donde se va a notificar la cédula.</div>
-
-      <ul class="item-list">
-        <li class="item" onclick="show('screen2')">
-          <div>
-            <div class="item-name">Misiones <span class="badge badge-active">Disponible</span></div>
-            <div class="item-sub">75 municipios · 5 circunscripciones</div>
-          </div>
-          <div class="item-arrow">›</div>
-        </li>
-        <li class="item disabled">
-          <div><div class="item-name">Corrientes <span class="badge badge-soon">Próximamente</span></div></div>
-        </li>
-        <li class="item disabled">
-          <div><div class="item-name">Chaco <span class="badge badge-soon">Próximamente</span></div></div>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════
        PANTALLA 2: CIRCUNSCRIPCIONES + BUSCADOR
   ══════════════════════════════════════════ -->
   <div class="screen" id="screen2">
     <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
     <div class="app-header">
-      <span class="back" onclick="show('screen1')">‹</span>
+      <span class="back" onclick="show('screen0')">‹</span>
       <h2>Misiones</h2>
     </div>
     <div class="screen-body" style="flex:1; overflow-y:auto;">
@@ -619,22 +588,13 @@
       <!-- Resultados de búsqueda (ocultos por defecto) -->
       <ul class="item-list" id="searchResults" style="display:none;"></ul>
 
-      <!-- Las 5 circunscripciones -->
+      <!-- Arranca en Posadas: la 1ª Circunscripción ya abierta, con sus municipios a la vista
+           (pedido del Dr. 05/11/2026); las otras cuatro, abajo. -->
       <div id="circBlock">
-        <div style="font-size:12px; color:rgba(247,246,255,.55); margin-bottom:10px;">O elegí por circunscripción:</div>
+        <div style="font-size:12px; color:rgba(247,246,255,.55); margin-bottom:8px;">1ª Circunscripción · Posadas</div>
+        <ul class="item-list" id="munPosadas" style="margin-bottom:18px;"></ul>
 
-        <div class="circ-card" onclick="show('screen3', '1ra')">
-          <div class="circ-header">
-            <div>
-              <div class="circ-num">1ª Circunscripción</div>
-              <div class="circ-name">Posadas</div>
-            </div>
-            <div class="circ-arrow">›</div>
-          </div>
-          <div class="circ-body">
-            <div class="circ-localidades">Capital · Apóstoles · Candelaria · Concepción · San Ignacio · San Javier</div>
-          </div>
-        </div>
+        <div style="font-size:12px; color:rgba(247,246,255,.55); margin-bottom:10px;">Otras circunscripciones:</div>
 
         <div class="circ-card" onclick="show('screen3', '2da')">
           <div class="circ-header">
@@ -1240,7 +1200,7 @@ const DATA = [
 let circActual = '1ra';
 let municipioActual = null;
 let pantAnteriorAResultado = 'screen3';
-const SCREEN_ORDER = ['screen0','screen1','screen2','screen3','screen4','screen5','screen6'];
+const SCREEN_ORDER = ['screen0','screen2','screen3','screen4','screen5','screen6'];
 let pantActual = 'screen0';
 
 /* ── Navegación con animación ── */
@@ -1417,8 +1377,14 @@ function renderMunicipios(circ) {
   const info = CIRC_INFO[circ];
   document.getElementById('circTitulo').textContent = info.titulo;
   document.getElementById('circSubtitulo').textContent = info.cabecera;
+  pintarMunicipios(circ, document.getElementById('munList'));
+}
+
+// La lista de municipios de una circunscripción en `list` (pantalla 3, y Posadas abierta en la 2).
+function pintarMunicipios(circ, list) {
+  if (!list) return;
+  const info = CIRC_INFO[circ];
   const municipios = DATA.filter(r => r.circ === circ);
-  const list = document.getElementById('munList');
   list.innerHTML = municipios.map(r =>
     `<li class="item" onclick="showResultadoData('${escAttr(r.nombre)}','${escAttr(r.circ)}')">
       <div>
@@ -1488,6 +1454,8 @@ document.addEventListener('keydown', (e) => {
 
 window.addEventListener('DOMContentLoaded', () => {
   contarApertura();
+  // «Empezar» entra a Misiones con Posadas ya abierta: su lista se arma al cargar.
+  pintarMunicipios('1ra', document.getElementById('munPosadas'));
   marcarFocuseables(document);
   // Al corregir un campo, limpiar su error inline
   const limpiar = (inputId, errId) => {
